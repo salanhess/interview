@@ -145,7 +145,7 @@ def analysis_twit(fpath):
         if TimeFrequency.count(i) > FlagHour:
             FlagHour = TimeFrequency.count(i)
             DetailHour = i
-    print("在%s点，发布的数据最多 with %s times" % (DetailHour,FlagHour))
+    print("在%s点，发布的数据最多with %s times" % (DetailHour,FlagHour))
     print("Contain '2012-11 tweets: %s,User dict is %s" % (FlagDate,date_dict))
     print(DetailDate)
 
