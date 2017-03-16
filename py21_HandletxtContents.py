@@ -27,7 +27,7 @@ Ltest = [1,2,1,1]
 print(MaxUid(*Ltest))
 
 def analysis_twit(fpath):
-    with open(fpath,encoding='utf-8') as filecontent:
+    with open(fpath,encoding='utf-8',errors='ignore') as filecontent:
         Flag = 0
         for line in filecontent:
             fcontent = []

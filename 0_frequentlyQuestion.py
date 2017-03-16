@@ -352,3 +352,104 @@ index = 0
 for i in fab(5):
     index +=1
     print('Index %d: %d' % (index,i))
+
+#41 检查字符串是否为数字
+s1 = '12ab3'
+print(s1.isdigit())
+
+s2 = '123'
+print(s2.isalnum())
+
+#给2n+1个数，其中n个数均出现了2次，有1个数只出现了1次，如何找出这个数？
+L1 = [2,2,1,3,3,4,1,5,4,5,6]
+dic = {}
+Flag = ''
+for i in L1:
+    if i in dic.keys():
+        dic[i]=2
+    else:
+        dic[i]=1
+        Flag = i
+print(Flag)
+
+#string isnumberic isdigit的区别
+# hbaitekiMacBook-Air:.ssh hbai$ python
+# Python 2.7.6 (default, Sep  9 2014, 15:04:36)
+# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.39)] on darwin
+# Type "help", "copyright", "credits" or "license" for more information.
+# >>> unicode.isdigit.__doc__
+# 'S.isdigit() -> bool\n\nReturn True if all characters in S are digits\n
+#  and there is at least one character in S, False otherwise.'
+# >>> unicode.isumberic.__doc__
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# AttributeError: type object 'unicode' has no attribute 'isumberic'
+# >>> unicode.isnumeric.__doc__
+# 'S.isnumeric() -> bool\n\nReturn True if there are only numeric characters in S,\nFalse otherwise.'
+'''
+
+    The method isnumeric() checks whether the string consists of only numeric characters.
+    This method is present only on unicode objects.
+
+    Digits include decimal characters and digits that need special handling,
+    such as the compatibility superscript digits. Formally,
+    a digit is a character that has the property value Numeric_Type=Digit or Numeric_Type=Decimal.
+'''
+
+#tuple和list可以做dict的key吗
+#list可变，不能被hash，所以只有tuple可以做key
+tuple1 = (2,1)
+list1 = [1,2]
+dic1 = {tuple1:list1}
+print(dic1)
+# dic2 = {list1:tuple1}
+try:
+    dic2 = {list1:tuple1}
+except TypeError as e:
+    print("xxx")
+    print(TypeError)
+
+#python的regex模块re，search和match的区别?
+#re.match只匹配字符串的开始，而re.search匹配整个字符串
+import re
+p = 'abc'
+str1 = '1abcdef'
+print(re.search(p,str1))
+print(re.match(p,str1))
+
+str2 = 'abcdef'
+print(re.search(p,str2))
+print(re.match(p,str2))
+
+#正则表达式文档参考 http://www.cnblogs.com/huxi/archive/2010/07/04/1771073.html
+s = 'one1two2three3four4'
+#如何分割得到['one','two','three','four'] ?
+p = re.compile(r'\d+')
+print(len(p.search(s).group())) #可以看出只有一个group
+print(p.split(s)[:-1])
+
+#如何得到里面的数字: ['1', '2', '3', '4']
+p = re.compile(r'\d+')
+print(p.findall(s))
+
+#搜索string，返回一个顺序访问每一个匹配结果（Match对象）的迭代器。返回 1 2 3 4
+p = re.compile(r'\d+')
+for i in p.finditer(s):
+    print(i.group())
+
+#sub 用法：替换，用组的方式替换制定单词，并且指定次数
+s = "i say, hello world!"
+p = re.compile(r'(\w+) (\w+)')
+print(p.sub(r'\2 \1',s,2))
+
+#找到并打印text中所有包含oo的单词: findall
+text = "JGood is a handsome boy, he is cool, clever, and so on..."
+p = re.compile(r'\w*oo\w*')
+print(p.findall(text))
+# #将字符串中含有'oo'的单词用[]括起来。
+print(p.sub(lambda x: '[' + x.group(0) + ']',text ))
+
+#调用工debug具pdb: l 查看  n 逐行执行  c 继续执行  p 查看变量 p <parametername>
+import pdb
+pdb.set_trace()
+print("I'm debuging")
