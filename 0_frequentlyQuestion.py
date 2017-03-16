@@ -339,3 +339,16 @@ def chunks(l,n):
 #import pprint
 #pprint.pprint(list(chunks(l, n)))
 print(list(chunks(l, 10)))
+
+#使用yield来生成斐波拉切数列
+
+def fab(Max):
+    a,b = 0,1
+    while b < Max:
+        yield b
+        a, b = b,a+b
+
+index = 0
+for i in fab(5):
+    index +=1
+    print('Index %d: %d' % (index,i))
