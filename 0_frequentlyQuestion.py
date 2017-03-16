@@ -353,7 +353,7 @@ for i in fab(5):
     index +=1
     print('Index %d: %d' % (index,i))
 
-#41 检查字符串是否为数字
+#41 检查字符串是否为数字 :查了一下区别，建议使用isdigit，比isalnum检查范围更广一些
 s1 = '12ab3'
 print(s1.isdigit())
 
@@ -451,5 +451,127 @@ print(p.sub(lambda x: '[' + x.group(0) + ']',text ))
 
 #调用工debug具pdb: l 查看  n 逐行执行  c 继续执行  p 查看变量 p <parametername>
 import pdb
-pdb.set_trace()
+#pdb.set_trace()
 print("I'm debuging")
+
+#42 查找列表中某个元素的下标: 使用index命令
+l = [1,3,6,5]
+print(l.index(3))
+
+#43 有什么方法获得一个字符串的字串,比如从一个字符串的第三个字符到最后.
+print(l[2:])
+
+#44 为什么代码在一个函数里运行的更快?
+#运行比较慢，我注释掉了
+'''
+运算时间：4.9149510860443115
+运算时间：7.055168151855469
+'''
+# import time
+# now = time.time()  # 代码开始时间  # 前期准备，整理数据
+# def main():
+#     for i in range(10**8):
+#         pass
+# main()
+#
+# print('运算时间：%s'%(time.time() - now))  # 整体运行时间
+#
+# now = time.time()  # 代码开始时间  # 前期准备，整理数据
+# for i in range(10**8):
+#     pass
+#
+# print('运算时间：%s'%(time.time() - now))  # 整体运行时间
+
+'''你或许想问为什么存取一个本地变量比全局变量要快.这有关于CPython的实现细节.
+
+记住CPython解析器运行的是被编译过的字节编码(bytecode).当一个函数被编译后,局部变量被存储在了固定大小的数组(不是一个dict),
+而变量名赋值给了索引.这就是为什么你不能动态的为一个函数添加局部变量.检查一个局部变量就好像是一个指针去查找列表,
+对于在PyObject上的引用计数的增长是微不足道的.
+
+相反的在查找全局变量(LOAD_GLOBAL)时,涉及到的是一个实实在在的dict的哈希查找.
+顺便说一句,这就是为什么当你想要一个全局变量你必须要在前面加上global i:
+如果你在一个区域内指定一个变量,编译器就会建立一个STORE_FAST的入口,除非你不让它那么做.
+在说一句,全局查找速度也不慢.真正拖慢速度的是像foo.bar这样的属性查找!
+'''
+#45 合并列表中的列表
+l = [[1,2,3],[4,5,6], [7], [8,9]]
+new = []
+def mergeList(l):
+    for i in l:
+        if isinstance(i,list):
+            mergeList(i)
+        else:
+            new.append(i)
+
+mergeList(l)
+print(new)
+#Note：following method is cool in stackoverflow but it's ONLY for list[list]
+#l = [[1,2,3],[4,5,6], [7], [8,9],[1,[2,3]]]
+print([item for sublist in l for item in sublist])
+
+#47 检查一个键在字典中是否存在
+dic1 = {'name':'cary','age':100}
+print('name' in dic1.keys())
+
+#48 在列表中随机取一个元素: random.choice()
+foo = ['a', 'b', 'c', 'd', 'e']
+import random
+for i in range(0,len(l)):
+    #print(foo[random.randrange(0,len(foo))])
+    print(random.choice(foo))
+
+#49 通过列表中字典的值对列表进行排序: sorted 函数，然后对每个list的字典元素使用k['name']获取值
+l1 = [{'name':'Homer', 'age':39}, {'name':'Bart', 'age':10}, {'name':'Cart', 'age':2}]
+print(sorted(l1,key= lambda k: k['name']))
+
+#通过age排序
+print(sorted(l1,key = lambda item: item['age']))
+
+#50 复制文件: os 里面没有copy方法
+import shutil
+src = r'twit.txt'
+dst = r'twit_copy.txt'
+shutil.copyfile(src,dst)
+
+#53 从相对路径引入一个模块
+#TBD
+
+#54 如何知道一个对象有一个特定的属性? 使用hasattr(objInstanceName,funcname)  ,类似 isinstance(objectName,expectedType)的用法
+class Myclass(object):
+    mystr = 'cary'
+    def hello(self):
+        print("hi %s" % self.mystr)
+
+new = Myclass()
+new.mystr = 'susan'
+new.hello()
+print(hasattr(new,'hello'))
+
+#55 *args和 **kwargs的用法
+#*args 不确定有多少参数的时候使用,可以看做是列表来使用
+def get_args(*args):
+    for i in range(0,len(args)):
+        print("Index %d: args is : %s" % (i,args[i]))
+
+get_args(1,2,3,4)
+list_args = ['a','c','d','b']
+get_args(*list_args)
+
+#**kwargs是字典,使用时要用.item() 来调用
+def get_dict_args(**kwargs):
+    for key,value in kwargs.items():
+        print("key is: %s , value is %s" % (key,value))
+
+    print(kwargs)
+
+get_dict_args(name='abc',value=100)
+
+#56 如何获取实例的类名  type(Instancename).__name__ 属性
+print(type(new).__name__)
+
+#57 字典推导式语法:d = {key: value for (key, value) in iterable}
+L = [1,2,3,4,5,6,7,8,9]
+dic1 = {key:key*10 for key in L}
+print(dic1)
+
+#58 反转字符串
