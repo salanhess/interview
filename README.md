@@ -9,7 +9,8 @@ c. https://flyouting.gitbooks.io/learn-python-the-hard-way-cn/content/learn-pyth
 面试准备
 0. 结合算法要求写小代码：一般会包装一下，本质不外乎二叉树、链表、查询、排序之类的问题（尽可能少用最low的递归？）
 0.1 正则、jason的使用
-0.2 FM/IBM的项目通用介绍
+0.2 py多线程的使用
+0.3 FM/IBM的项目通用介绍
 
 1. py经验要突出： 
 项目1  代码管理工具，带界面的
