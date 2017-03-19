@@ -2,6 +2,7 @@
 # refer to http://www.cnblogs.com/yoyoketang/p/6128611.html
 #todo loop with error :    raise exception_class(message, screen, stacktrace)
 #selenium.common.exceptions.StaleElementReferenceException: Message: The element reference is stale. Either the element is no longer attached to the DOM or the page has been refreshed.
+#About error because in current version of FF, new link opened in previous window,so can't switch back
 
 from selenium import webdriver
 import time
