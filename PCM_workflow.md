@@ -75,6 +75,26 @@ Based on Testgrid wrapped with Selenium[sə'liniəm]
     return_msg=PCMGUIAction.getGUIMessage("Account");
     Assert.findKeywords(return_msg, "Account added");
     
-
+## Execute daily automation and generate report ##
+> . * Add task via crontab
+> 35 05 * * 6 /root/cleanPerfLog.sh 2>&1 >> /root/cleanPerfLog/cleanPerfLog.log
     
+    # Example of job definition:
+    # .---------------- minute (0 - 59)
+    # |  .------------- hour (0 - 23)
+    # |  |  .---------- day of month (1 - 31)
+    # |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+    # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+    # |  |  |  |  |
+    # *  *  *  *  * user-name  command to be executed
+
+> . * Check result via Web portal 
+![](https://www.ibm.com/developerworks/cn/devops/1608_baik_test/image019.png)
+
+
+## Continuous Testing ##
+>DevOps require continuous Integration testing, so after each integration, we should pass Unit testing Function testing and even Performance Testing Stress testing if time schedule is enough.
+
+## Next Steps ##
+Due to resource limitation, will consider deploy test env in Docker/container later.ONLY commit Fail/Error case image if nessary.
 
