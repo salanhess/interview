@@ -94,6 +94,7 @@ Based on Testgrid wrapped with Selenium[sə'liniəm]
 
 ## Continuous Testing ##
 >DevOps require continuous Integration testing, so after each integration, we should pass Unit testing Function testing and even Performance Testing Stress testing if time schedule is enough.
+![DevOps](https://www.ibm.com/developerworks/cn/devops/1608_baik_test/image001.png)
 
 ## Next Steps ##
 Due to resource limitation, will consider deploy test env in Docker/container later.ONLY commit Fail/Error case image if nessary.
