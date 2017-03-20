@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tg:testGrid xmlns:tg="http://testgrid.platform.com/Conf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://testgrid.platform.com/Conf Conf.xsd ">
+    <testSuiteName>IBM HPC/PCM 4.2.1 Smoke Test</testSuiteName>
+    <reportFileName>report.xml</reportFileName>
+    <SUTSpec>com.platform.testgrid.actions.PCM41.PCMSpec</SUTSpec>
+    <!--reportProp>com.platform.testgrid.actions.ocs.OCSAction.reportProp</reportProp-->
+    <productProp>com.platform.testgrid.actions.PCM41.PCMAction.pcmProp</productProp>
+    <additionalListeners>
+    <listener> <class>com.platform.testgrid.actions.PCM41.PCMListener</class>  </listener>
+    </additionalListeners>
+      <reportTestCaseProps>
+            <!-- the name is case tag name -->
+            <prop> <name>desc</name>    </prop>
+            <prop> <name>features</name>    </prop>
+            <prop> <name>priority</name>    </prop>
+          </reportTestCaseProps>
+    <envs>
+       
+        <!-- Must modify these base env to run auto cases -->  
+        <env><name>MN_IP</name><value>9.21.52.168</value></env>
+        <env><name>MN_OS</name><value>rhel</value></env>
+        <!-- MN OS LSB have three types: ppc64le,ppc64, amd64 -->
+        <env><name>MN_OS_LSB</name><value>ppc64le</value></env>
+        <env><name>MN_OS_VERSION</name><value>7.1</value></env>
+        <!-- MN OS arch have three types: x86,x86_64, ppc64 -->
+        <env><name>MN_ARCH</name><value>ppc64</value></env>
+        <env><name>MN_HOSTNAME</name><value>ppcmastere</value></env>
+        <env><name>WEBGUI_IP</name><value>9.21.52.168</value></env>
+        <env><name>WEBGUI_USERID</name><value>root</value></env>
+        <env><name>WEBGUI_PASSWORD</name><value>Letmein123</value></env>
+        <env><name>ROOTPASSWD</name><value>Letmein123</value></env>        
+        <env><name>PRODUCT_MOUNT_PATH</name><value>/mnt</value></env>
+        <!-- Product name contains: HPC and PCM -->
+        <env><name>PRODUCT_NAME</name><value>HPC</value></env>
+        <env><name>OS_PATH</name><value>/root/rhel-server-6.5-x86_64-dvd.iso</value></env> 
+        <env><name>LOG_PATH</name><value>/install/pcm/work</value></env>
+        <env><name>HW_CONF</name><value>PCMHWConf_std.xml</value></env>
+        <!-- Base env setting Done -->
+        
+		<!-- Installation VAR -->
+        <env><name>ISO_PATH</name><value>/root/rhel72ppcle.iso</value></env>
+		<env><name>ENTITLEMENT</name><value>/root/pcm.entitlement</value></env>
+        <env><name>ISO_MOUNT_PATH</name><value>/mnt</value></env>
+        <env><name>SNAPSHOT_LEVEL</name><value>1</value></env>
+		
+        
+        <!-- IMAGE PROFILES VAR -->
+        <env><name>STATEFUL_IMAGE</name><value>rhels7.2-ppc64le-stateful-compute</value></env>
+        <env><name>STATELESS_IMAGE</name><value>rhels7.2-ppc64le-stateless-compute</value></env>
+         <env><name>DEFAULT_NETWORK_PROFILE</name><value>default_network_profile</value></env>
+         <env><name>STATEFUL_PROVISION_TEMPLATE</name><value>rhels7.2-x86_64_stateful_compute</value></env>
+        <env><name>STATELESS_PROVISION_TEMPLATE</name><value>rhels7.2-x86_64_stateless_compute</value></env>
+        <env><name>PROVISION_NIC</name><value>eth1</value></env>
+        <env><name>PUBLIC_NIC</name><value>eth0</value></env>        
+        <env><name>UPDATE_PATH</name><value>rhels7.0-x86_64-stateless-compute</value></env> 
+        <env><name>TEST_COPY_STATELESS_IMAGE</name><value>test_copy_stateless_image</value></env>
+        <env><name>TEST_COPY_STATEFUL_IMAGE</name><value>test_copy_stateful_image</value></env>
+        <env><name>TEST_NETWORK_INTERFACE</name><value>eth0</value></env>
+        <env><name>TEST_NETWORK_PROFILE</name><value>test_network_profile</value></env>
+        <env><name>STATEFUL_SYNC_DIR</name><value>/install/osimages/ubuntu14.04.1-x86_64-stateful-compute/cfmdir/</value></env> 
+        
+         <!-- Must modify these HW settings -->
+        <env><name>PROV_NODE_FLAG</name><value>Y</value></env>
+               
+        <!-- Please assign product package to install PCM / HPC -->
+        <env><name>PRODUCT_PACKAGE_PATH</name><value>/pcc/cnbuild/build/output/pcm/4.2/RC3.repack6/pcm-4.2.x86_64.iso</value></env>
+        
+        
+        <!-- User & LDAP settings -->
+        <env><name>LDAP_SERVER</name><value>9.111.249.187</value></env>
+        <env><name>LDAP_SERVER_PWD</name><value>a</value></env>
+        <env><name>OS_USER</name><value>test</value></env>
+        <env><name>OS_USER_PWD</name><value>letmein</value></env>
+        <env><name>LDAP_USER</name><value>pcmuser</value></env>
+        <env><name>LDAP_USER1</name><value>pcmuser1</value></env>
+        <env><name>LDAP_USER2</name><value>pcmuser2</value></env>
+        <env><name>LDAP_USER3</name><value>pcmuser3</value></env>
+        <env><name>LDAP_USER4</name><value>pcmuser4</value></env>
+        <env><name>LDAP_USER_PWD</name><value>a</value></env>
+        <env><name>LDAP_USER_GROUP1</name><value>pcm</value></env>
+        <env><name>LDAP_USER_GROUP2</name><value>qa</value></env>
+        <!-- PMPI kit setting -->
+        <env><name>PRODUCT_INSTALLER_PATH</name><value>/root/DailySmoke/pcm_mnt/phpc-installer</value></env>
+        <env><name>PMPI_KIT_PATH</name><value>/pcc/cnbuild/build/output/hpc/4.1.1/linux2.6-glibc2.5-x86_64_rhel5.6/kit-pmpi-9.1.tar.bz2</value></env>
+        <env><name>PMPI_LOCAL_PATH</name><value>/root/pmpi_kit</value></env>
+        <env><name>PMPI_SHORT_NAME</name><value>pmpi</value></env>
+        <env><name>PMPI_KIT_NAME</name><value>kit-pmpi-9.1</value></env>
+        <env><name>PROVISION_NETWORK</name><value>default_network_profile</value></env>
+        <env><name>HOST_NAME_FMT</name><value>pcmstdcn#N</value></env>
+        <env><name>MAC_PATH</name><value>/root/mac.lst</value></env>
+           
+        <!-- OS update VAR -->
+        <env><name>OS_UPDATE_PKGS_PATH</name><value>/pcc/qa/ocs/wleixa/rhels6.5-x86_64-2014-09-03_08-20-31</value></env>
+        <env><name>OS_DISTRO_NAME</name><value>ubuntu14.04.1-x86_64</value></env>
+        <env><name>UBUNTU_OS_UPDATE_PKGS_PATH</name><value>/pcc/qa/ocs/yhliu/ubuntu_updates</value></env>
+        
+        <!-- Power env VAR -->
+        <env><name>GRUB_PATH</name><value>/pcc/qa/ocs/yhliu/grub2-xcat-1.0-2.noarch.rpm</value></env>
+        <env><name>PCM_BE_ISO</name><value>/root/pcm-4.2.1.power.be.iso</value></env>
+         <env><name>KVM_HYPER_NAME</name><value>pkvm</value></env>
+        <env><name>KVM_HYPER_IP</name><value>9.21.52.160</value></env>
+        <env><name>KVM_HYPER_PASSWD</name><value>powerkvm</value></env>
+         
+        
+        <!-- Cross VAR -->
+        <env><name>CROSS_DISTRO_NAME</name><value>centos6.6-x86_64</value></env>
+        <env><name>RHEL7X_STATEFUL_IMAGE</name><value>centos6.6-x86_64-stateful-compute</value></env>
+        <env><name>RHEL7X_STATELESS_IMAGE</name><value>centos6.6-x86_64-stateless-compute</value></env>
+        <env><name>RHEL7X_OS_PATH</name><value>/scratch/qa/phjiao/iso/CentOS-6.6-x86_64-bin-DVD1.iso /scratch/qa/phjiao/iso/CentOS-6.6-x86_64-bin-DVD2.iso</value></env>
+        <env><name>CROSS_UPDATE_PKGS_PATH</name><value>/pcc/qa/ocs/wleixa/rhels6.5-x86_64-2014-09-03_08-20-31</value></env>
+        
+        
+        <!-- CUDA GPU VAR this is for Rhel7.1, please modify this var before running gpu case -->
+        <env><name>LSF_GPU_PHASE2_ADDON_X86</name><value>LSF_linux2.6-glibc2.3-x86_64_347817</value></env>
+        <env><name>CUDA_IMAGE_PROFILE_RHEL71</name><value>rhels7.1-x86_64-stateful-compute-CUDA</value></env>        
+        <env><name>CUDA_PKG_PATH</name><value>/pcc/qa/ocs/Yajuan/PHPC/CUDA_GPU/</value></env>
+        <env><name>CUDA_PKG_RHEL7X</name><value>cuda-repo-rhel7-7-0-local-7.0-28.x86_64.rpm</value></env>        
+        <env><name>DKMS_PKG</name><value>dkms-2.2.0.3-30.git.7c3e7c5.el6.noarch.rpm</value></env> 
+        <env><name>LIBVDPAU_PKG</name><value>libvdpau-0.9-1.el7.x86_64.rpm</value></env>
+        <env><name>CUDA_NODE_NAME</name><value>cudanode0</value></env>
+        <env><name>CUDA_NODE_MAC_FILE_PATH</name><value>/pcc/qa/ocs/Yajuan/cudanode0_mac.conf</value></env>
+        
+        
+    </envs>
+    
+    <onStart>
+    </onStart>
+    <onEachCase>
+        import com.platform.testgrid.utils.*;
+        import com.platform.testgrid.actions.*;
+        import com.platform.testgrid.actions.OCSAction.*;
+        import com.platform.testgrid.actions.PCM41.*;
+        import com.platform.testgrid.actions.PCM41.PCMAction;
+        import com.platform.testgrid.actions.Assert.*;
+        import com.platform.testgrid.actions.ocs.*;
+        import com.platform.testgrid.Environment;
+        import java.util.*;
+        import java.util.Random;
+        import com.platform.testgrid.actions.ocs.OutputUtil;
+        Logger.getMainLogger().enable(false);
+        Logger.setTraceAppender(new java.io.FileWriter("${WORK_DIR}/cmdtrace.txt", true));
+        Shell.cd(WORK_DIR);
+        Logger.getMainLogger().enable(true); 
+        PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+        stamp = Utils.timeExpr(0, "MdHs"); 
+        random = new Random();
+    </onEachCase>
+
+     <onFail>
+	Shell.echo("========================Failed========================");
+        com.platform.testgrid.utils.webTester.Window.captureFullScreen("${CASE_SHARED_DIR}/last.png");
+//		PCMGUIAction.logout();
+		Factory.destoryAll();
+               BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+              BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+                              Window br = Factory.create();
+               br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.setBrowserObject(br);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);	
+    </onFail>
+    <onAbort>
+	Shell.echo("========================Abort========================");
+        com.platform.testgrid.utils.webTester.Window.captureFullScreen("${CASE_SHARED_DIR}/last.png");
+//		PCMGUIAction.logout();
+		Factory.destoryAll();
+               BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+              BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+                              Window br = Factory.create();
+               br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.setBrowserObject(br);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+    </onAbort>
+  
+    <groups>
+    <group>
+            <groupName>Installation</groupName>
+            <onEachGroupCase>
+             import com.platform.testgrid.actions.PCM41.*;
+            </onEachGroupCase>
+            <onGroupStart>      
+                PCMAction.checkMountPoint(ISO_MOUNT_PATH);
+                date = Shell.cmd("pty date +%m%d").get(0);
+                date = date.toString().trim();
+                pcmiso = Shell.cmdi("ls /root/dailybuild/" + date + " -t -1") | Str.toString();
+                //pcmiso = "/root/pcm-4.2.1-150720-215532.ppc64le.iso";
+                pcmiso = pcmiso.trim();
+                mountediso = Shell.cmdi("mount | grep ${ISO_MOUNT_PATH}");
+                if(mountediso.size() > 0)
+                {
+                      mountiso = mountediso.get(0).toString();
+                      if(mountiso.contains(ISO_MOUNT_PATH))
+                      {
+                          Shell.cmdi("umount ${ISO_MOUNT_PATH}");
+                      }
+                }
+                
+                Shell.cmdi("mkdir -p ${ISO_MOUNT_PATH}");
+                Shell.cmdi("mount -o loop "+"/root/dailybuild/"+date+"/${pcmiso} ${ISO_MOUNT_PATH}");
+                 //Shell.cmdi("mount -o loop "+"${pcmiso} ${ISO_MOUNT_PATH}");
+                pcmVersion=Shell.cmd("echo ${pcmiso} | cut -d- -f2").get(0);
+                isoVersion=Shell.cmd("echo ${pcmiso} | cut -d- -f3 | cut -d. -f1").get(0);
+                System.setProperty(OCSSpec.PCM_VERSION, pcmVersion);
+                System.setProperty(OCSSpec.PCM_DAILYBUILD_VERSION, isoVersion); 
+                </onGroupStart>
+            <preRestore>
+            </preRestore>
+            <postRestore>
+            </postRestore>
+        </group>
+        
+	<group>
+              <!-- name of the group -->
+              <groupName>pcm_gui_ie</groupName>
+              <!-- script in this node will be run before each case in the group -->
+		 
+               <onEachGroupCase>
+                #timeout=1800s
+		Shell.echo("========================On Each Case========================");
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import com.platform.testgrid.actions.pac.*;
+                import java.io.*;		   
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                //CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                //CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                //CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                //CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                //CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                //CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT = 4000;
+				BrowserFactory.type = "ie_comserver";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+				//set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+
+              </onEachGroupCase>
+              <onGroupStart>
+				Shell.echo("========================On Group Start========================");
+				Window br = Factory.create();
+				PCMGUIAction.setBrowserObject(br);
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);		
+             </onGroupStart> 
+			 
+             <preRestore>
+				Shell.echo("========================On Pre-Restore========================");
+              </preRestore>
+              <postRestore>
+				Shell.echo("========================On Post-Restore========================");
+              </postRestore>
+        </group>
+
+	<group>
+             <groupName>pcm_gui</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+               #timeout=1800s
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import com.platform.testgrid.actions.pac.*;
+                import java.io.*;
+                BrowserFactory.type = "firefox_engine";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+				
+                
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                //CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                //CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                //CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                //CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                //CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                //CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                CN1_CECNAME = PCMAction.getCNCEC(CN1_NAME);
+                CN2_CECNAME = PCMAction.getCNCEC(CN2_NAME);
+                //CN3_CECNAME = PCMAction.getCNCEC(CN3_NAME);
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT=4000;
+                //set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+
+              </onEachGroupCase>
+              <onGroupStart>
+                Window br = Factory.create();
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.setBrowserObject(br);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+             </onGroupStart>
+             <preRestore>
+              </preRestore>
+              <postRestore>
+            </postRestore>
+        </group>
+		
+	
+        <group>
+              <!-- name of the group -->
+              <groupName>setup_env</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import java.io.*;
+                BrowserFactory.type = "ie";
+                
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                //CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+               // CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+               // CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                //CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+               // CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+               // CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+              </onEachGroupCase>
+              <onGroupStart>
+             </onGroupStart>
+             <preRestore>
+              </preRestore>
+              <postRestore>
+              </postRestore>
+        </group>
+        <group>
+              <!-- name of the group -->
+              <groupName>os_porting</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import com.platform.testgrid.actions.pac.*;
+                import java.io.*;
+                BrowserFactory.type = "firefox_engine";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+                
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                //CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                //CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                //CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                //CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                //CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                //CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT=4000;
+                //set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+               
+                
+              </onEachGroupCase>
+              <onGroupStart>
+                   Shell.echo("========================On Group Start========================");
+				Window br = Factory.create();
+				PCMGUIAction.setBrowserObject(br);
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);	
+             </onGroupStart>
+             <preRestore>
+             Shell.echo("========================On Pre-Restore========================");
+              </preRestore>
+              <postRestore>
+              Shell.echo("========================On Post-Restore========================");
+              </postRestore>
+        </group>
+        
+         <group>
+              <!-- name of the group -->
+              <groupName>os_porting_ie</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import com.platform.testgrid.actions.pac.*;
+                import java.io.*;
+                BrowserFactory.type = "ie_comserver";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+                
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                //CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                //CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                //CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                //CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                //CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                //CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT = 4000;
+                //set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+                
+              </onEachGroupCase>
+              <onGroupStart>
+                Shell.echo("========================On Group Start========================");
+				Window br = Factory.create();
+				PCMGUIAction.setBrowserObject(br);
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);	
+             </onGroupStart>
+             <preRestore>
+             Shell.echo("========================On Pre-Restore========================");
+              </preRestore>
+              <postRestore>
+               Shell.echo("========================On Post-Restore========================");
+              </postRestore>
+        </group>
+        <group>
+              <!-- name of the group -->
+              <groupName>xCAT_rel</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import java.io.*;
+                BrowserFactory.type = "firefox_engine";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+                
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT=4000;
+                //set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+                Window br = Factory.create();
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.setBrowserObject(br);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+              </onEachGroupCase>
+              <onGroupStart>
+                PCMGUIAction.logout();
+                Factory.destoryAll();
+             </onGroupStart>
+             <preRestore>
+              </preRestore>
+              <postRestore>
+                PCMGUIAction.logout();
+                Factory.destoryAll();
+              </postRestore>
+        </group>
+        
+                <group>
+              <!-- name of the group -->
+              <groupName>xCAT_rel_ie</groupName>
+              <!-- script in this node will be run before each case in the group -->
+               <onEachGroupCase>
+                import com.platform.testgrid.utils.*;
+                import com.platform.testgrid.utils.webTester.*;
+                import com.platform.testgrid.actions.PCM41.*;
+                import java.io.*;
+                BrowserFactory.type = "ie_comserver";
+                PCMAction = new com.platform.testgrid.actions.PCM41.PCMAction(SE);
+                PCMGUIAction = new com.platform.testgrid.actions.PCM41.PCMGUIAction(SE);
+                
+                CNs = PCMAction.getCNsName();
+                CN1_NAME    = CNs.get(0);
+                CN2_NAME    = CNs.get(1);
+                CN3_NAME    = CNs.get(2);
+                CN_NAME_FMT = "pcmstdcn#N";
+                
+                CN1_MAC = PCMAction.getCNMAC(CN1_NAME);
+                CN2_MAC = PCMAction.getCNMAC(CN2_NAME);
+                CN3_MAC = PCMAction.getCNMAC(CN3_NAME);
+                
+                CN1_HWTYPE = PCMAction.getCNHWTYPE(CN1_NAME);
+                CN2_HWTYPE = PCMAction.getCNHWTYPE(CN2_NAME);
+                CN3_HWTYPE = PCMAction.getCNHWTYPE(CN3_NAME);
+                
+                CN1_IPMIIP = PCMAction.getCNIPMIIP(CN1_NAME);
+                CN2_IPMIIP = PCMAction.getCNIPMIIP(CN2_NAME);
+                CN3_IPMIIP = PCMAction.getCNIPMIIP(CN3_NAME);
+                
+                CN1_VMNAME = PCMAction.getCNVMNAME(CN1_NAME);
+                CN2_VMNAME = PCMAction.getCNVMNAME(CN2_NAME);
+                CN3_VMNAME = PCMAction.getCNVMNAME(CN3_NAME);
+                
+                CN1_STATETYPE = PCMAction.getCNSTATETYPE(CN1_NAME);
+                CN2_STATETYPE = PCMAction.getCNSTATETYPE(CN2_NAME);
+                CN3_STATETYPE = PCMAction.getCNSTATETYPE(CN3_NAME);
+                
+                // Cluster instance provisioning timeout
+                int CLUSTER_TIMEOUT = 4000;
+                //set firefox run module. FIREFOX_IDE/FIREFOX_GUI 
+                BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+                BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+                Window br = Factory.create();
+                br.navigate("http://" + WEBGUI_IP);
+                PCMGUIAction.setBrowserObject(br);
+                PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+              </onEachGroupCase>
+              <onGroupStart>
+                PCMGUIAction.logout();
+                Factory.destoryAll();
+             </onGroupStart>
+             <preRestore>
+              </preRestore>
+              <postRestore>
+                PCMGUIAction.logout();
+                Factory.destoryAll();
+              </postRestore>
+        </group>
+ 
+    </groups>
+</tg:testGrid>
