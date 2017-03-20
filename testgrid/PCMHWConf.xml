@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<STD_TEST_ENV>
+ <MachineInfo>
+     <!-- Must be stateful node -->
+     <NAME>pcmstdcn1</NAME>
+     <MAC>00:0c:29:a9:15:dd</MAC>
+     <!-- HW type support: vmware, kvm, IPMI, IBM_Flex_System_x, and etc.
+      make sure these HW type are same as hw profile from GUI -->
+     <HWTYPE>VMWare</HWTYPE> 
+     <!-- If HW type is hypervisior, make sure MN can ssh to HV with passwdless -->
+     <IPMIIP>9.111.250.127</IPMIIP> 
+     <VMNAME>cn1_stateful</VMNAME>
+     <STATETYPE>stateful</STATETYPE>
+     <CEC>cec</CEC>
+     <LPAR>1</LPAR>
+ </MachineInfo>
+ <MachineInfo>
+      <!-- Must be stateless node -->
+      <NAME>pcmstdcn2</NAME>
+      <MAC>00:0c:29:ed:8f:7b</MAC>
+      <!-- HW type support: vmware, kvm, IPMI, IBM_Flex_System_x, and etc.
+       make sure these HW type are same as hw profile from GUI -->
+      <HWTYPE>VMWare</HWTYPE> 
+      <!-- If HW type is hypervisior, make sure MN can ssh to HV with passwdless -->
+      <IPMIIP>9.111.250.127</IPMIIP>
+      <VMNAME>cn2_stateless</VMNAME>
+      <STATETYPE>stateless</STATETYPE>
+      <CEC>cec</CEC>
+      <LPAR>1</LPAR> 
+  </MachineInfo>
+</STD_TEST_ENV>
