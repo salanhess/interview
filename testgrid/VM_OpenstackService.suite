@@ -1,0 +1,66 @@
+Begin Check_Openstack_service
+#testscript
+#desc="Check MN Openstack service after installed"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=template, hpc_smoke_test
+#features=MN check
+#timeout=600s
+on(MN_IP)
+{
+	o = Shell.cmd("pty pcmadmin service list");
+	Shell.echo(o);
+	Assert.findKeywords("NOVA");
+	Assert.findKeywords("NEUTRON");
+	Assert.findKeywords("KEYSTONE");
+	Assert.findKeywords("GLANCE");
+}
+
+End Check_Openstack_service
+
+#Begin Check_Openstack_Stopgroup_service
+#testscript
+#desc="Check pcmadmin stop --group OPENSTACK can work"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=template, hpc_smoke_test
+#features=MN check
+#timeout=600s
+on(MN_IP)
+{
+	o = Shell.cmd("pty pcmadmin service stop --group OPENSTACK");
+	Shell.echo(o);
+	Shell.sleep(10s);
+	Assert.findKeywords("DEFINED");
+	Shell.cmd("pty systemctl status openstack-nova-api |grep Active")| Assert.findKeywords("inactive") | Assert.findKeywords("dead");
+	Shell.cmd("pty systemctl status openstack-nova-cert |grep Active")| Assert.findKeywords("inactive") | Assert.findKeywords("dead");
+	Shell.cmd("pty systemctl status openstack-nova-novncproxy |grep Active")| Assert.findKeywords("inactive") | Assert.findKeywords("dead");
+	Shell.cmd("pty systemctl status openstack-nova-metadata-api |grep Active")| Assert.findKeywords("inactive") | Assert.findKeywords("dead");
+}
+
+#End Check_Openstack_Stopgroup_service
+
+Begin Check_Openstack_Startgroup_service
+#testscript
+#desc="Check pcmadmin start --group OPENSTACK can work"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=template, hpc_smoke_test
+#features=MN check
+#timeout=600s
+on(MN_IP)
+{
+	o = Shell.cmd("pty pcmadmin service start --group OPENSTACK");
+	Shell.echo(o);
+	Shell.sleep(10s);
+	Assert.findKeywords("DEFINED");
+	Shell.cmd("pty systemctl status openstack-nova-api |grep Active")| Assert.findKeywords("active") | Assert.findKeywords("running");
+	Shell.cmd("pty systemctl status openstack-nova-cert |grep Active")| Assert.findKeywords("active") | Assert.findKeywords("running");
+	Shell.cmd("pty systemctl status openstack-nova-novncproxy |grep Active")| Assert.findKeywords("active") | Assert.findKeywords("running");
+	Shell.cmd("pty systemctl status openstack-nova-metadata-api |grep Active")| Assert.findKeywords("active") | Assert.findKeywords("running");
+}
+
+End Check_Openstack_Startgroup_service
