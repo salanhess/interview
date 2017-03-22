@@ -1,0 +1,416 @@
+//=========================================================================================
+/*
+pre-condition:
+1. Install PCM or HPC
+2. BMC can be used
+step:
+1.Navigate to the IP Pools page.
+2.Add BMC into IP Pools
+
+*/
+#Begin Network_Manage_case_1
+#testscript
+#desc="add BMC network in IP pools"
+#author="liqing"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+#timeout=600s
+cn1=CN1_NAME;
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Networks", "IP Pools");
+new_network_name="BMC";
+expected_network_comments="BMC testing";
+expected_network_provision_ip="192.168.85.0";
+expected_network_provision_mask="255.255.255.0";
+expected_network_static_start_ip= "192.168.85.140";
+expected_network_static_end_ip="192.168.85.141";
+expected_network_modify_description="modify network";
+
+HashMap<String, String> networkParam = new HashMap<String, String>();
+networkParam.put(PCMPageSettingParam.NETWORK_COMMENTS, expected_network_comments);
+networkParam.put(PCMPageSettingParam.NETWORK_PROVISION_IP, expected_network_provision_ip);
+networkParam.put(PCMPageSettingParam.NETWORK_PROVISION_MASK, expected_network_provision_mask);
+networkParam.put(PCMPageSettingParam.NETWORK_STATIC_START_IP, expected_network_static_start_ip);
+networkParam.put(PCMPageSettingParam.NETWORK_STATIC_END_IP, expected_network_static_end_ip);
+//networkParam.put(PCMPageSettingParam.NETWORK_DYNAMIC_START_IP, expected_network_dynamic_start_ip);
+//networkParam.put(PCMPageSettingParam.NETWORK_DYNAMIC_END_IP, expected_network_dynamic_end_ip);
+
+PCMGUIAction.addNetwork(new_network_name, networkParam);
+
+result_message = PCMGUIAction.getGUIMessage();
+Assert.findKeywords(result_message, "added.");
+new_network_table = PCMGUIAction.getNetwork(new_network_name);
+Assert.notNull(new_network_table.getCell("NAME"), "added network profile does not exist!");
+	
+#End Network_Manage_case_1
+
+//=========================================================================================
+#Begin NetworkProfile_Manage_case_1
+#testscript
+#desc="create with BMC network profile(based on added BMC IP pools)"
+#author="baihao"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+#timeout=600s
+expected_network_profile_description="just testing";
+expected_network_interface_name="eth0";
+expected_network_interface_name1="bmc";
+new_network_profile_name="BMC_networkprofile";
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Network Profiles");
+List<HashMap<String, String>> networkInterfaceParamList = new ArrayList<HashMap<String, String>>();
+HashMap<String, String> network_profile_param = new HashMap<String, String>();
+network_profile_param.put(PCMPageSettingParam.NETWORK_PROFILE_DESCRIPTION, expected_network_profile_description);
+
+HashMap<String, String> networkInterfaceParam = new HashMap<String, String>();
+networkInterfaceParam.put(PCMPageSettingParam.NETWORK_INTERFACE_NAME, expected_network_interface_name);
+networkInterfaceParam.put(PCMPageSettingParam.NETWORK_INTERFACE_TYPE, "Ethernet");
+networkInterfaceParam.put(PCMPageSettingParam.NETWORK_INTERFACE_NETWORK, "provision");
+networkInterfaceParamList.add(networkInterfaceParam);
+
+
+HashMap<String, String> networkInterfaceParam1 = new HashMap<String, String>();
+//networkInterfaceParam1.put(PCMPageSettingParam.NETWORK_INTERFACE_NAME, expected_network_interface_name1);
+networkInterfaceParam1.put(PCMPageSettingParam.NETWORK_INTERFACE_TYPE, "BMC");
+networkInterfaceParam1.put(PCMPageSettingParam.NETWORK_INTERFACE_NETWORK, "BMC");
+networkInterfaceParamList.add(networkInterfaceParam1);
+
+/* Add new network profile */
+PCMGUIAction.addNetworkProfile(new_network_profile_name, network_profile_param, networkInterfaceParamList);
+result_message = PCMGUIAction.getGUIMessage();
+Assert.findKeywords(result_message, "added.");
+new_network_profile_table = PCMGUIAction.getNetworkProfile(new_network_profile_name);
+Assert.notNull(new_network_profile_table.getCell("NAME"), "added network profile does not exist!");
+	
+#End NetworkProfile_Manage_case_1
+
+
+//=========================================================================================
+/*
+pre-condition:
+1. Install PCM or HPC
+2. BMC network profile already added in BMC_networkprofile
+3. Openpower(Habanero/Firestone) HWTYPE is IBM_System_p_LC, need config in PCMHWConf_std.xml
+step:
+1. Navigate to the node list page.
+2. Select the node----> Auto discovery mode
+
+*/
+Begin Provision_AutoBMC_case
+#testscript
+#desc="Auto discovery provision stateless node with default imageprofile (mac and BMC file)"
+#author="baihao"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting, BMC, OpenPower
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATELESS_IMAGE;
+//prov_network = PROVISION_NETWORK;
+prov_network = "BMC_networkprofile";
+cn1_hw_profile = "IBM_System_p_LC";
+cn1_bmc = "192.168.85.140";
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+hm = new LinkedHashMap<String,String>();
+hm.put(PCMPageSettingParam.NODE_GROUP_SELECTION, "compute");
+hm.put(PCMPageSettingParam.NODE_TEMPLATE_SELECTION, "Specify properties...");
+hm.put(PCMPageSettingParam.NODE_NAME_FORMAT, HOST_NAME_FMT);
+hm.put(PCMPageSettingParam.NODE_IMAGE_POFILE_SELECT, osimg);
+hm.put(PCMPageSettingParam.NODE_NETWORK_POFILE_SELECT, prov_network);
+hm.put(PCMPageSettingParam.NODE_HARDWARE_POFILE_SELECT, cn1_hw_profile);
+hm.put(PCMPageSettingParam.NODE_AUTO_DISCOVER, "");
+o1 = PCMGUIAction.addComputeNode(hm);
+Shell.echo(o1);
+
+// Wait nodes to be provisioned
+
+on(MN_IP)
+{
+	//need run following command to reset CN node
+	// 
+    o1 = Shell.cmd("/opt/xcat/bin/ipmitool-xcat -H " + cn1_bmc + " -U ADMIN -P admin chassis power reset ");
+    Assert.findKeywords(o1, "reset");
+}
+
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(CN1_NAME);
+    if(startupFlag == false)
+    {
+        Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    PCMAction.nodediscoverstop();
+}
+End Provision_AutoBMC_case
+
+//=========================================================================================
+/*
+pre-condition:
+1. Install PCM or HPC
+2. BMC network profile already added in BMC_networkprofile
+3. Openpower(Habanero/Firestone) HWTYPE is IBM_System_p_LC, need config in PCMHWConf_std.xml
+4. cn53_macBMC.conf in /testgrid/suites/PCM/ with example format:
+cnfull53:
+    mac=a0:42:3f:30:de:b8
+    nicips=bmc!192.168.85.138
+step:
+1.navigate to the node list page.
+2. select the node----> Import method
+
+*/
+Begin Provision_Import_BMCnode_case
+#testscript
+#desc="Provision stateless node with default imageprofile (BMC and mac file)"
+#author="baihao"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATELESS_IMAGE;
+//prov_network = PROVISION_NETWORK;
+prov_network = "BMC_networkprofile";
+cn1_hw_profile = "IBM_System_p_LC";
+name_fmt = HOST_NAME_FMT;
+hwConf = HW_CONF;
+node=CN1_NAME;
+on(MN_IP)
+{   
+    PCMAction.nodepurge(CN1_NAME);
+    PCMAction.loadHWConf(hwConf);
+    String macFilePath = Environment.TG_TOP()+"/suites/PCM/" + CN1_NAME + "_macBMC.conf";
+    Shell.echo(macFilePath);
+    PCMAction.genCNHostInfoFile(CN1_NAME, macFilePath);
+            
+    PCMAction.importNode(macFilePath, osimg, prov_network, cn1_hw_profile, name_fmt);
+    PCMAction.rsetboot(node);
+    PCMAction.rpower("reset", node);
+    Shell.sleep(5s);
+    PCMAction.rpower("on", node);
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+ //Check the node status
+PCMGUIAction.waitNodeStatus(node, "provisioning", 500);
+PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+//Check the node sync status
+PCMGUIAction.waitSyncStatus(node, "synced", 300);
+	
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(node);
+    if(startupFlag == false)
+    {
+        Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    PCMAction.nodediscoverstop();
+}
+End Provision_Import_BMCnode_case
+//=========================================================================================
+/*
+pre-condition:
+1. Install PCM or HPC
+2. BMC network profile already added in BMC_networkprofile
+3. Openpower(Habanero/Firestone) HWTYPE is IBM_System_p_LC, need config in PCMHWConf_std.xml
+4. cn53_macBMCSwitch.conf in /testgrid/suites/PCM/ with example format:
+cnswitch53:
+switches=eth0!myswitch!42
+nicips=bmc!192.168.85.144
+step:
+1.navigate to the node list page.
+2. select the node----> Import method
+
+*/
+Begin Provision_Import_BMCSwitch_case
+#testscript
+#desc="Provision stateless node with default imageprofile (BMC and switch file)"
+#author="baihao"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATELESS_IMAGE;
+//prov_network = PROVISION_NETWORK;
+prov_network = "BMC_networkprofile";
+cn1_hw_profile = "IBM_System_p_LC";
+name_fmt = HOST_NAME_FMT;
+hwConf = HW_CONF;
+node=CN1_NAME;
+on(MN_IP)
+{   
+    PCMAction.nodepurge(CN1_NAME);
+    PCMAction.loadHWConf(hwConf);
+    String macFilePath = Environment.TG_TOP()+"/suites/PCM/" + CN1_NAME + "_macBMCSwitch.conf";
+    Shell.echo(macFilePath);
+    PCMAction.genCNHostInfoFile(CN1_NAME, macFilePath);
+            
+    PCMAction.importNode(macFilePath, osimg, prov_network, cn1_hw_profile, name_fmt);
+    PCMAction.rsetboot(node);
+    PCMAction.rpower("reset", node);
+    Shell.sleep(5s);
+    PCMAction.rpower("on", node);
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+ //Check the node status
+PCMGUIAction.waitNodeStatus(node, "provisioning", 500);
+PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+//Check the node sync status
+PCMGUIAction.waitSyncStatus(node, "synced", 300);
+	
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(node);
+    if(startupFlag == false)
+    {
+        Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    PCMAction.nodediscoverstop();
+}
+End Provision_Import_BMCSwitch_case
+//=========================================================================================
+
+Begin Check_MN_512chars
+#testscript
+#desc="Check MN table pcm_nic_param column customscript have 512 characters,currently RTC issue: 65624"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=regression, OS_porting, BMC, OpenPower
+#features=MN check
+#timeout=600s
+PCMGUIAction.clickrackview();
+on(MN_IP)
+{
+	wait(10s)
+	{
+		p = Shell.cmdbg("pty psql xcatdb xcatadm --command \"\\d+ pcm_nic_param\"");
+		p.expectStr("128");
+	}
+}
+
+End Check_MN_512chars
+
+
+Begin Check_CN_BMC_xCAT_cmd
+#testscript
+#desc="(This case ONLY support NV type with BMC control CN nodes)Check CN BMC control xCAT related command"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=regression, OS_porting, BMC, OpenPower
+#features=CN check
+#timeout=600s
+cn1=CN1_NAME;
+on(MN_IP)
+{
+	 //On NV expected result:
+	 Shell.cmd("pty rvitals " + cn1 + " fanspeed ") | Assert.findKeywords("Fan") | Assert.findKeywords("RPM");
+	 Shell.cmd("pty rvitals " + cn1 + " wattage ") | Assert.findKeywords("CPU") | Assert.findKeywords("Amps");
+	 Shell.cmd("pty rbeacon " + cn1 + " on ") | Assert.findKeywords("on");
+	 Shell.cmd("pty rpower " + cn1 + " stat ") | Assert.findKeywords("on");
+	 
+	 //On VM will use following case to debug
+	 //Shell.cmd("pty rvitals " + cn1 + " fanspeed ") | Assert.findKeywords("Error") | Assert.findKeywords("tables");
+	 //Shell.cmd("pty rbeacon " + cn1 + " on ") | Assert.findKeywords("Error");
+	 //Shell.cmd("pty rpower " + cn1 + " stat ") | Assert.findKeywords("on");	 
+}
+
+End Check_CN_BMC_xCAT_cmd
+
+
+Begin Check_MN_hwprofile
+#testscript
+#desc="Check MN hardware profile after installed PCM/HPC(Type System_p_LC means Open_Power of Habanero and Firestone"
+#author="baihao"
+#group=pcm_gui
+#priority=P1
+#keyword=regression, OS_porting, BMC, OpenPower
+#features=MN check
+#timeout=600s
+PCMGUIAction.clickrackview();
+on(MN_IP)
+{
+	o = Shell.cmd("tabdump nodegroup|grep __HardwareProfile");
+	Shell.echo(o);
+	Assert.findKeywords(o, "System_p_LC");
+	o = Shell.cmd("lsdef -t group|grep __HardwareProfile");
+	Shell.echo(o);
+	Assert.findKeywords(o, "System_p_LC");
+}
+
+End Check_MN_hwprofile
+
+#Begin poweroff_node
+#testscript
+#desc="power off node "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node with BMC network profile
+step:
+1.navigate to the node list page.
+2. select the node----> Power--->off
+
+*/
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+PCMGUIAction.powerOperation("Off");
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Powering off nodes");
+
+PCMGUIAction.waitPowerStatus(CN1_NAME, "off", 300);
+
+#End poweroff_node
+
+//==============================================================================================================
+
+
+#Begin poweron_node
+#testscript
+#desc="power off node "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node with BMC network profile
+step:
+1.navigate to the node list page.
+2. select the node----> Power--->on
+
+*/
+
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+PCMGUIAction.powerOperation("On");
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Powering on nodes");
+
+PCMGUIAction.waitPowerStatus(CN1_NAME, "on", 300);
+
+
+
+#End poweron_node

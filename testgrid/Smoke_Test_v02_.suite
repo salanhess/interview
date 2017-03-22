@@ -1,0 +1,2182 @@
+//======================================================================================
+Begin Provision_auto_case_2
+#testscript
+#desc="Auto discovery + without provision template + within group + package-based method + Unspecified"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=provision node(auto discovery)
+cn1=CN1_NAME;
+if(MN_OS.equals("rhel")&& MN_OS_LSB.equals("amd64")) 
+{
+	
+	// Remove CN1_NAME node to provisioning it
+	on(MN_IP)  
+	{
+	    PCMAction.nodepurge(CN1_NAME);
+       //Shell.cmd("/opt/xcat/bin/nodepurge " + cn1);
+	   Shell.cmd("/opt/pcm/web-portal/perf/1.2/bin/plcclient.sh -d pcmnodeloader") | Assert.findKeywords("successfully");
+	}
+	
+	//PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+	//PCMGUIAction.selectNode(CN1_NAME);
+	//o = PCMGUIAction.removeNode();
+	//Shell.echo(o);
+	//Assert.findKeywords(o, successfully);
+	
+	hm = new LinkedHashMap<String,String>();
+	hm.put(PCMPageSettingParam.NODE_GROUP_SELECTION, "compute");
+	hm.put(PCMPageSettingParam.NODE_TEMPLATE_SELECTION, "Specify properties...");
+	hm.put(PCMPageSettingParam.NODE_NAME_FORMAT, HOST_NAME_FMT);
+	hm.put(PCMPageSettingParam.NODE_IMAGE_POFILE_SELECT, STATEFUL_IMAGE);
+	hm.put(PCMPageSettingParam.NODE_NETWORK_POFILE_SELECT, PROVISION_NETWORK);
+	hm.put(PCMPageSettingParam.NODE_HARDWARE_POFILE_SELECT, CN1_HWTYPE);
+	hm.put(PCMPageSettingParam.NODE_AUTO_DISCOVER, "");
+	PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+	o1 = PCMGUIAction.addComputeNode(hm);
+	Shell.echo(o1);
+	
+	// Wait nodes to be provisioned
+	
+	
+	node = CN1_NAME;
+	//hw_conf_path=HW_CONF_PATH;
+	hw_conf = HW_CONF;
+	on(MN_IP)  
+	{
+	    PCMAction.loadHWConf(hw_conf);
+	    PCMAction.rpower("reset", node);
+	    Shell.sleep(2s);
+	    PCMAction.rpower("on", node);
+	    //PCMAction.powerOffVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME1);
+	    //PCMAction.powerOnVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME1);
+	   // PCMAction.waitNodeProvisioned(node);
+	   // startupFlag = PCMAction.checkNodeStartup(node);
+	   // if(startupFlag == false)
+	   // {
+	   //     Assert.fail("Node can not be accessed by ssh with passwdless.");
+	   // }
+	}
+	
+	//Check the node status
+	PCMGUIAction.waitNodeStatus(node, "provisioning", 1800);
+	PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+	//Check the node sync status
+	PCMGUIAction.waitSyncStatus(node, "synced", 120);
+	
+	on(MN_IP)
+	{
+		PCMAction.nodediscoverstop();
+	}
+}
+
+End Provision_auto_case_2
+
+
+//================================================================================================================================
+
+Begin Provision_auto_case_8
+#testscript
+#desc="Auto discovery + without provision template + within group + stateless method+ rack unit"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=provision node(auto discovery)
+cn1=CN1_NAME;
+if(MN_OS.equals("rhel")&& MN_OS_LSB.equals("amd64")) 
+{	
+	// Remove CN1_NAME node to provisioning it
+	on(MN_IP)  
+	{
+	    PCMAction.nodepurge(CN1_NAME);
+	    //Shell.cmd("/opt/xcat/bin/nodepurge " + cn1);
+	   Shell.cmd("/opt/pcm/web-portal/perf/1.2/bin/plcclient.sh -d pcmnodeloader") | Assert.findKeywords("successfully");
+	}
+	/*
+	 Factory.destoryAll();
+	 BrowserFactory.type = "ie";
+	 BrowserFactory Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+	 Window br = Factory.create();
+     br.navigate("http://" + WEBGUI_IP);
+    PCMGUIAction.setBrowserObject(br);
+    PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+	PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+	//PCMGUIAction.selectNode(CN1_NAME);
+	ren_msg=PCMGUIAction.removeNode(CN1_NAME);
+	Assert.findKeyworkds(ren_msg, "Removed");
+	
+	PCMGUIAction.logout();
+
+	Factory.destoryAll();
+	BrowserFactory.type = "firefox";
+	 BrowserFactory Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());
+	 Window br = Factory.create();
+     br.navigate("http://" + WEBGUI_IP);
+    PCMGUIAction.setBrowserObject(br);
+    PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+    */
+	PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+	hm = new LinkedHashMap<String,String>();
+	hm.put(PCMPageSettingParam.NODE_GROUP_SELECTION, "compute");
+	hm.put(PCMPageSettingParam.NODE_TEMPLATE_SELECTION, "Specify properties...");
+	hm.put(PCMPageSettingParam.NODE_NAME_FORMAT, HOST_NAME_FMT);
+	hm.put(PCMPageSettingParam.NODE_IMAGE_POFILE_SELECT, STATELESS_IMAGE);
+	hm.put(PCMPageSettingParam.NODE_NETWORK_POFILE_SELECT, PROVISION_NETWORK);
+	hm.put(PCMPageSettingParam.NODE_HARDWARE_POFILE_SELECT, "VMWare");
+	hm.put(PCMPageSettingParam.NODE_AUTO_DISCOVER, "Rack unit");
+	//hm.put("nodeLocation","Blade chassis");
+	o1 = PCMGUIAction.addComputeNode(hm);
+	Shell.echo(o1);
+	
+	// Wait nodes to be provisioned
+	
+	
+	node = CN1_NAME;
+	//hw_conf_path=HW_CONF_PATH;
+	hw_conf = HW_CONF;
+	on(MN_IP)  
+	{
+	    PCMAction.loadHWConf(hw_conf);
+	    PCMAction.rpower("reset", node);
+	    Shell.sleep(2s);
+	    PCMAction.rpower("on", node);
+		//PCMAction.powerOffVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME1);
+	    //PCMAction.powerOnVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME1);
+	 
+	}
+	
+	//Check the node status
+	PCMGUIAction.waitNodeStatus(node, "provisioning", 1800);
+	PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+	//Check the node sync status
+	PCMGUIAction.waitSyncStatus(node, "synced", 120);
+	
+	
+	on(MN_IP)
+	{
+		PCMAction.nodediscoverstop();
+		startupFlag = PCMAction.checkNodeStartup(node);
+	   if(startupFlag == false)
+	    {
+	       Assert.fail("Node can not be accessed by ssh with passwdless.");
+	    }
+	    o2 = Shell.cmd("/opt/xcat/bin/lsdef -t node " + node + " | grep rack");
+	    Assert.findKeywords(o2, "rack=rack1");
+	}
+}
+
+End Provision_auto_case_8
+
+//========================================================================================================================================
+
+
+Begin Provision_Import_node_case_14
+#testscript
+#desc="Provision stateless node with default imageprofile (mac file)"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATELESS_IMAGE;
+prov_network = PROVISION_NETWORK;
+name_fmt = HOST_NAME_FMT;
+hwConf = HW_CONF;
+node=CN1_NAME;
+on(MN_IP)
+{   
+    PCMAction.nodepurge(CN1_NAME);
+    PCMAction.loadHWConf(hwConf);
+    String macFilePath = Environment.TG_TOP()+"/suites/PCM/" + CN1_NAME + "_mac.conf";
+    PCMAction.genCNHostInfoFile(CN1_NAME, macFilePath);
+            
+    PCMAction.importNode(macFilePath, osimg, prov_network, CN1_HWTYPE, name_fmt);
+    PCMAction.rsetboot(CN1_NAME);
+    PCMAction.rpower("reset", CN1_NAME);
+    Shell.sleep(5s);
+    PCMAction.rpower("on", CN1_NAME);
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+ //Check the node status
+PCMGUIAction.waitNodeStatus(node, "provisioning", 500);
+PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+//Check the node sync status
+PCMGUIAction.waitSyncStatus(node, "synced", 300);
+	
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(CN1_NAME);
+    if(startupFlag == false)
+    {
+        Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    PCMAction.nodediscoverstop();
+}
+End Provision_Import_node_case_14
+
+//===============================================================================================================================
+#Begin Provision_Import_node_case_1
+#testscript
+#desc="Provision stateful node with default imageprofile (mac file)"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATEFUL_IMAGE;
+prov_network = PROVISION_NETWORK;
+name_fmt = HOST_NAME_FMT;
+hwConf = HW_CONF;
+node=CN1_NAME;
+on(MN_IP)
+{   
+    PCMAction.nodepurge(CN1_NAME);
+    PCMAction.loadHWConf(hwConf);
+    String macFilePath = Environment.TG_TOP()+"/suites/PCM/" + CN1_NAME + "_mac.conf";
+    PCMAction.genCNHostInfoFile(CN1_NAME, macFilePath);
+            
+    PCMAction.importNode(macFilePath, osimg, prov_network, CN1_HWTYPE, name_fmt);
+    PCMAction.rsetboot(CN1_NAME);
+    PCMAction.rpower("reset", CN1_NAME);
+    Shell.sleep(5s);
+    PCMAction.rpower("on", CN1_NAME);
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+ //Check the node status
+PCMGUIAction.waitNodeStatus(node, "provisioning", 600);
+PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+//Check the node sync status
+PCMGUIAction.waitSyncStatus(node, "synced", 300);
+	
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(CN1_NAME);
+    if(startupFlag == false)
+    {
+        Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    PCMAction.nodediscoverstop();
+}
+#End Provision_Import_node_case_1
+
+//==========================================================================================================================
+
+#Begin Provision_Import_node_case_26
+#testscript
+#desc="Import multi-node via mac file"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+osimg = STATELESS_IMAGE;
+prov_network = PROVISION_NETWORK;
+name_fmt = HOST_NAME_FMT;
+hwConf=HW_CONF;
+mn_os=MN_OS;
+
+NodeCountArr=new int[]{5};
+i = 0; //loop count 
+	repeat(NodeCountArr.length)
+	{
+		NodeCount = NodeCountArr[i];
+	}
+	
+macpath= MAC_PATH;
+
+on(MN_IP)
+{
+  PCMAction.generateMacFile(NodeCount,0,macpath);
+  Shell.echo(macpath);
+  PCMAction.markFileLen("/var/lib/dhcpd/dhcpd.leases");
+
+
+PCMAction.importNode(macpath, osimg, prov_network, null, name_fmt);
+
+
+// After nodes provision, check nodes information and configuration.
+//Shell.cmd("pty nodels | grep pcmstdcn ") | Assert.findKeywords("pcmstdcn");
+
+nodeList = Shell.cmd("pty nodels | grep pcmstdcn") | Str.toStringArray();
+Shell.echo(nodeList);
+List<String> ip_list = new ArrayList<String>();
+for(String node_name: nodeList)
+{
+	ip_list.add(Shell.cmd("pty /opt/xcat/bin/lsdef ${node_name} | grep \"ip=\" | cut -d= -f2").get(0));
+}
+String[] ipList = new String[ip_list.size()];
+ipList = ip_list.toArray(ipList);
+wait(30s) {
+	// check PXE file
+	//Shell.cmd("ls /tftpboot/xcat/xnba/nodes") | Assert.findKeywords(nodeList);
+	// Check /etc/hosts file
+	Shell.cat("/etc/hosts") | Assert.findKeywords(nodeList);
+	// Check dhcp records  Here, has some problems!   -->Shell.mark file length
+     if(mn_os.equals("ubuntu"))
+     {
+	   PCMAction.cat("/var/lib/dhcp/dhcpd.leases") | Assert.findKeywords(nodeList) | Assert.findKeywords(ipList);
+     }
+     else
+     {
+     	PCMAction.cat("/var/lib/dhcpd/dhcpd.leases") | Assert.findKeywords(nodeList) | Assert.findKeywords(ipList);
+     }
+}
+//---- Post restore: removing these imported nodes
+System.out.println("============Removing Nodes==============");
+PCMAction.nodepurge("/pcmstdcn.*");
+re_cmd = "rm -f ${EXAMPLE_PATH}/mac.lst";
+Shell.cmd(re_cmd);
+
+
+}
+
+#End Provision_Import_node_case_26
+
+//======================================================================================================================
+Begin Reinstall_node_with_default_template
+#testscript
+#desc="Reinstall node with default provision template "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node
+step:
+1.navigate to the node list page.
+2. select the node----> more action ---> Reinstall---confirm in the dialog
+*/
+
+PCMGUIAction.clickrackview();
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+HashMap <String, String> reinstallParam = new HashMap<String, String>();
+reinstallParam.put(PCMPageSettingParam.NODE_REINSTALL_ORIGINAL_PROFILE, null);
+PCMGUIAction.reInstallNode(reinstallParam);
+
+
+//PCMAction.resetVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME2);
+
+PCMGUIAction.waitNodeStatus(CN1_NAME, "provisioning", 600);
+
+PCMGUIAction.waitNodeStatus(CN1_NAME, "provisioned", 1800);
+
+PCMGUIAction.waitSyncStatus(CN1_NAME, "synced", 600);
+
+
+End Reinstall_node_with_default_template
+//=========================================================================
+//=================================================================================================================
+
+Begin Reinstall_node_with_new_template
+#testscript
+#desc="Reinstall node with new provision template "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node
+step:
+1.navigate to the node list page.
+2. select the node----> more action ---> Reinstall---confirm in the dialog
+*/
+
+new_provision_template = STATEFUL_PROVISION_TEMPLATE;
+node = CN2_NAME;
+stateimage=STATEFUL_IMAGE;
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN2_NAME);
+HashMap <String, String> reinstallParam = new HashMap<String, String>();
+reinstallParam.put(PCMPageSettingParam.NODE_REINSTALL_OTHER_PROFILE, new_provision_template);
+PCMGUIAction.reInstallNode(reinstallParam);
+
+
+//PCMAction.resetVM(HVIP,HVUSER, HVROOTPSSWD, MACHINE_NAME2);
+
+PCMGUIAction.waitNodeStatus(CN2_NAME, "provisioning", 600);
+PCMGUIAction.waitNodeStatus(CN2_NAME, "provisioned", 1800);
+PCMGUIAction.waitSyncStatus(CN2_NAME, "synced", 600);
+
+
+on(MN_IP)
+{
+	Shell.cmd(" /opt/xcat/bin/lsdef -t node -o " + node + "| grep groups") |Assert.findKeywords(stateimage);
+}
+
+
+End Reinstall_node_with_new_template
+//==========================================================================================================================================
+
+
+#Begin poweroff_node
+#testscript
+#desc="power off node "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node with BMC network profile
+step:
+1.navigate to the node list page.
+2. select the node----> Power--->off
+
+*/
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+PCMGUIAction.powerOperation("Off");
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Powering off nodes");
+
+PCMGUIAction.waitPowerStatus(CN1_NAME, "off", 300);
+
+#End poweroff_node
+
+//==============================================================================================================
+
+
+#Begin poweron_node
+#testscript
+#desc="power off node "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node with BMC network profile
+step:
+1.navigate to the node list page.
+2. select the node----> Power--->on
+
+*/
+
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+PCMGUIAction.powerOperation("On");
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Powering on nodes");
+
+PCMGUIAction.waitPowerStatus(CN1_NAME, "on", 300);
+
+
+
+#End poweron_node
+
+//=============================================================================================================
+
+//=======================================================================================================
+
+
+//=================================================================================================================================================
+
+
+Begin Relocate_rack_node
+#testscript
+#desc="Click relocate button, relocate one node to rack  "
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Node management 
+
+/*
+pre-condition:
+1. Install PCM or HPC
+2. Some node are provisioned, included statefull and stateless node with BMC network profile
+step:
+1.navigate to the node list page.
+2. select the node----> More--->relocate
+*/
+
+node = CN1_NAME;
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Nodes");
+PCMGUIAction.selectNode(CN1_NAME);
+HashMap <String, String> relocateParam = new HashMap<String, String>();
+relocateParam.put(PCMPageSettingParam.NODE_RELOCATE_LOCATION, "Rack Unit");
+relocateParam.put(PCMPageSettingParam.NODE_RELOCATE_RACK, "rack1");
+relocateParam.put(PCMPageSettingParam.NODE_RELOCATE_HEIGHT, "1U");
+relocateParam.put(PCMPageSettingParam.NODE_RELOCATE_START_UNIT, "2");
+PCMGUIAction.relocateNode(relocateParam);
+
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Relocated node");
+
+// Check relocated whether succeed.
+on(MN_IP)
+{
+    o1 = Shell.cmd("/opt/xcat/bin/lsdef -t node " + node + " | grep rack");
+    Assert.findKeywords(o1, "rack=rack1");
+    o2 = Shell.cmd("/opt/xcat/bin/lsdef -t node " + node + " | grep height");
+    Assert.findKeywords(o2, "height=1");
+    o3 = Shell.cmd("/opt/xcat/bin/lsdef -t node " + node + " | grep unit");
+    Assert.findKeywords(o3, "unit=2");
+}
+
+End Relocate_rack_node
+
+//============================================================================================================================
+
+
+//==========================================================================================================================
+
+//=========================================================================================================================
+Begin Image_Profile_case_48
+#testscript
+#desc="List all the Image Profile and check the summary"
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Image profile
+
+/*
+steps:
+1. Copy two Image Profiles
+2. Delete an Image Profile.
+3. Check the Image Profile list.
+*/
+
+statefull= STATEFUL_IMAGE;
+stateless=STATELESS_IMAGE;
+on(MN_IP)
+{
+	Shell.cmd("/opt/xcat/bin/lsdef -t osimage|grep " + statefull) | Assert.findKeywords(statefull);
+	Shell.cmd("/opt/xcat/bin/lsdef -t osimage|grep " + stateless) | Assert.findKeywords(stateless);
+
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+
+o1=PCMGUIAction.getImageProfile(STATEFUL_IMAGE);
+Assert.findKeywords(o1, STATEFUL_IMAGE);
+
+o2=PCMGUIAction.getImageProfile(STATELESS_IMAGE);
+Assert.findKeywords(o2, STATELESS_IMAGE);
+
+End Image_Profile_case_48
+//==========================================================================================================================
+
+Begin Image_Profile_case_49
+#testscript
+#desc="Copy an Image Profile and modify it. Then use it to provision a node."
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Image profile
+
+/*
+steps:
+1. Copy an Image Profile and give a name by copy button.
+2. Do some change for this Image Profile and save.
+3. Provision a node and use it.
+*/
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+
+PCMGUIAction.copyImageProfile(STATEFUL_IMAGE, "test_image");
+return_msg=PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "copied");
+
+modify_image_profile_name = "test_image";
+expected_profile_description = "Test modify image profile. Associate zsh";
+package_name = "acl:true";
+pkgName="acl";
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+HashMap<String, String> image_profile_param_hm = new HashMap<String, String>();
+image_profile_param_hm.put(PCMPageSettingParam.GENERAL_DESCRIPTION, expected_profile_description);
+image_profile_param_hm.put(PCMPageSettingParam.IMAGEPROFILE_OSPACKAGE, package_name);
+
+PCMGUIAction.modifyImageProfile(modify_image_profile_name, true, image_profile_param_hm);
+
+PCMGUIAction.br.waitElement(Cond.div(modify_image_profile_name));
+PCMGUIAction.refresh();
+
+//Check Pakages Tab in image profile list page
+imgProfile_summary_hm = PCMGUIAction.getImageProfileSummary(modify_image_profile_name);
+HashMap<String, String> packagehm = (HashMap<String, String>)imgProfile_summary_hm.get("Packages");
+ospkglist = packagehm.get("OS Packages");
+Shell.echo(ospkglist);
+Assert.findKeywords(ospkglist, pkgName);
+
+
+
+End Image_Profile_case_49
+
+//==================================================================================
+Begin Image_Profile_case_45
+#testscript
+#desc="provision a node on copied image."
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=Image profile
+
+osimg="test_image";
+prov_network = PROVISION_NETWORK;
+name_fmt = HOST_NAME_FMT;
+hwConf = HW_CONF;
+mn_os=MN_OS;
+pkgName="acl";
+node=CN1_NAME;
+
+on(MN_IP)
+{   
+    PCMAction.nodepurge(CN1_NAME);
+    PCMAction.loadHWConf(hwConf);
+    String macFilePath = Environment.TG_TOP()+"/suites/PCM/" + CN1_NAME + "_mac.conf";
+    PCMAction.genCNHostInfoFile(CN1_NAME, macFilePath);
+            
+    PCMAction.importNode(macFilePath, osimg, prov_network, CN1_HWTYPE, name_fmt);
+    PCMAction.rsetboot(CN1_NAME);
+    PCMAction.rpower("reset", CN1_NAME);
+    Shell.sleep(5s);
+    PCMAction.rpower("on", CN1_NAME);
+}
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure","Nodes");
+ //Check the node status
+//Shell.echo("node: " node);
+PCMGUIAction.waitNodeStatus(node, "provisioning", 500);
+PCMGUIAction.waitNodeStatus(node, "provisioned", 1800);
+	
+//Check the node sync status
+PCMGUIAction.waitSyncStatus(node, "synced", 300);
+   
+
+    
+on(MN_IP)
+{ 
+    startupFlag = PCMAction.checkNodeStartup(CN1_NAME);
+    if(startupFlag == false)
+    {
+       Assert.fail("Node can not be accessed by ssh with passwdless.");
+    }
+    
+    if(mn_os.equals("ubuntu"))
+    {
+    	o1=Shell.cmd("xdsh " + CN1_NAME + " dpkg -l |grep " + pkgName);
+    	Assert.findKeywords(o1,pkgName );
+    	
+    }
+    
+    else
+    {
+    	o=Shell.cmd("xdsh " + CN1_NAME + " rpm -qa |grep " + pkgName ); 
+    	Assert.findKeywords(o,pkgName );
+    }
+    PCMAction.nodediscoverstop();
+}
+   
+PCMGUIAction.logout();
+PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+
+End Image_Profile_case_45
+
+
+
+//=========================================================================================================================================
+
+#Begin Image_Profile_case_50
+#testscript
+#desc="Modify the Image Profile when it has provision a node"
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=image_profile, OS_porting
+
+
+modify_image_profile_name = "test_image";
+expected_profile_description = "Test modify image profile. Disassociate acl";
+packagelist = "acl:false";
+pkgName = "acl";
+mn_os=MN_OS;
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+HashMap<String, String> image_profile_param_hm = new HashMap<String, String>();
+image_profile_param_hm.put(PCMPageSettingParam.GENERAL_DESCRIPTION, expected_profile_description);
+image_profile_param_hm.put(PCMPageSettingParam.IMAGEPROFILE_OSPACKAGE, packagelist);
+PCMGUIAction.modifyImageProfile(modify_image_profile_name, true, image_profile_param_hm);
+br.waitElement(Cond.div(modify_image_profile_name));
+PCMGUIAction.refresh();
+Shell.sleep(10s);
+
+//Check Pakages Tab in image profile list page
+imgProfile_summary_hm = PCMGUIAction.getImageProfileSummary(modify_image_profile_name);
+HashMap<String, String> packagehm = (HashMap<String, String>)imgProfile_summary_hm.get("Packages");
+ospkglist = packagehm.get("OS Packages");
+Shell.echo(ospkglist);
+Assert.notFindKeywords(ospkglist, pkgName);
+
+
+on(MN_IP)  
+{
+    if(mn_os.equals("ubuntu"))
+    {
+    	o1=Shell.cmd("xdsh " + CN1_NAME + " dpkg -l |grep " + pkgName);
+    	Assert.notFindKeywords(o1,pkgName );
+    	
+    }
+    
+    else
+    {
+    	o=Shell.cmd("xdsh " + CN1_NAME + " rpm -qa |grep" + pkgName ); 
+    	Assert.notFindKeywords(o,pkgName );
+    }
+    
+}   
+
+#End Image_Profile_case_50
+
+//============================================================================================================================================
+
+#Begin Image_Profile_case_51
+#testscript
+#desc="Delete an Image Profile which it is  used."
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=image_profile, OS_porting
+/*
+Pre-condition:
+1. Image Profile referred to a Provision template.
+2. Image Profile have provision a node.
+Step:
+1. Delete Image Profile by click Delete button
+*/
+
+modify_image_profile_name = "test_image";
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+PCMGUIAction.DeleteImageProfile("test_image");
+return_msg= PCMGUIAction.getGUIMessage();
+Assert.findKeywords(return_msg, "Cannot delete image profile");
+
+#End Image_Profile_case_51
+
+//===========================================================================================================================
+Begin Image_Profile_case_52
+#testscript
+#desc="Delete an Image Profile which it is not used"
+#author="yaheng"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=regression, OS_porting
+#features=image_profile, OS_porting
+/*
+1. Delete a built-in Image Profile.
+2. Delete a non-built-in Image Profile.
+*/
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+
+PCMGUIAction.copyImageProfile(STATEFUL_IMAGE, "test_image_2");
+return_msg=PCMGUIAction.getGUIMessage();
+//Assert.findKeywords(return_msg, "copied");
+
+PCMGUIAction.DeleteImageProfile("test_image_2");
+return_msg= PCMGUIAction.getGUIMessage();
+
+End Image_Profile_case_52
+
+//=========================================================================================
+
+Begin Network_Manage_case_69_70_71
+#testscript
+#desc="add/remove/modify network"
+#author="liqing"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Networks", "IP Pools");
+expected_network_comments="just testing";
+expected_network_provision_ip="16.16.0.0";
+expected_network_provision_mask="255.255.255.0";
+expected_network_static_start_ip= "16.16.0.6";
+expected_network_static_start_ip="16.16.0.6";
+expected_network_static_end_ip="16.16.0.16";
+new_network_name="eth6";
+expected_network_modify_description="modify network";
+
+HashMap<String, String> networkParam = new HashMap<String, String>();
+networkParam.put(PCMPageSettingParam.NETWORK_COMMENTS, expected_network_comments);
+networkParam.put(PCMPageSettingParam.NETWORK_PROVISION_IP, expected_network_provision_ip);
+networkParam.put(PCMPageSettingParam.NETWORK_PROVISION_MASK, expected_network_provision_mask);
+networkParam.put(PCMPageSettingParam.NETWORK_STATIC_START_IP, expected_network_static_start_ip);
+networkParam.put(PCMPageSettingParam.NETWORK_STATIC_END_IP, expected_network_static_end_ip);
+//networkParam.put(PCMPageSettingParam.NETWORK_DYNAMIC_START_IP, expected_network_dynamic_start_ip);
+//networkParam.put(PCMPageSettingParam.NETWORK_DYNAMIC_END_IP, expected_network_dynamic_end_ip);
+
+PCMGUIAction.addNetwork(new_network_name, networkParam);
+
+result_message = PCMGUIAction.getGUIMessage();
+Assert.findKeywords(result_message, "added.");
+new_network_table = PCMGUIAction.getNetwork(new_network_name);
+Assert.notNull(new_network_table.getCell("NAME"), "added network profile does not exist!");
+
+HashMap<String, String> network_param_hm = new HashMap<String, String>();
+network_param_hm.put(PCMPageSettingParam.NETWORK_COMMENTS, expected_network_modify_description);
+
+PCMGUIAction.modifyNetwork(new_network_name, network_param_hm);
+
+result_message = PCMGUIAction.getGUIMessage("modified");
+Assert.findKeywords(result_message, "modified.");
+PCMGUIAction.br.waitElement(Cond.div(new_network_name));
+nmodify_network_profile_table = PCMGUIAction.getNetwork(new_network_name);
+
+PCMGUIAction.DeleteNetwork(new_network_name);
+
+result_message = PCMGUIAction.getGUIMessage("removed");
+Assert.findKeywords(result_message, "removed.");
+End Network_Manage_case_69_70_71
+
+//=========================================================================================
+
+Begin Network_Profile_case_1_3_4
+#testscript
+#desc="create/remove/modify network profile"
+#author="liqing"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+expected_network_profile_description="just testing";
+expected_network_interface_name="eth0";
+new_network_profile_name="test_networkprofile";
+expected_network_profile_modify_description="modify profile";
+modify_network_profile_name="test_networkprofile111";
+
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Network Profiles");
+List<HashMap<String, String>> networkInterfaceParamList = new ArrayList<HashMap<String, String>>();
+HashMap<String, String> network_profile_param = new HashMap<String, String>();
+network_profile_param.put(PCMPageSettingParam.NETWORK_PROFILE_DESCRIPTION, expected_network_profile_description);
+
+HashMap<String, String> networkInterfaceParam = new HashMap<String, String>();
+networkInterfaceParam.put(PCMPageSettingParam.NETWORK_INTERFACE_NAME, expected_network_interface_name);
+networkInterfaceParamList.add(networkInterfaceParam);
+/* Add new network profile */
+PCMGUIAction.addNetworkProfile(new_network_profile_name, network_profile_param, networkInterfaceParamList);
+result_message = PCMGUIAction.getGUIMessage();
+Assert.findKeywords(result_message, "added.");
+new_network_profile_table = PCMGUIAction.getNetworkProfile(new_network_profile_name);
+Assert.notNull(new_network_profile_table.getCell("NAME"), "added network profile does not exist!");
+
+HashMap<String, String> network_profile_param_hm = new HashMap<String, String>();
+network_profile_param_hm.put(PCMPageSettingParam.NETWORK_PROFILE_DESCRIPTION, expected_network_profile_modify_description);
+
+PCMGUIAction.modifyNetworkProfile(new_network_profile_name, network_profile_param_hm);
+
+result_message = PCMGUIAction.getGUIMessage("modified");
+Assert.findKeywords(result_message, "modified.");
+PCMGUIAction.br.waitElement(Cond.div(new_network_profile_name));
+nmodify_network_profile_table = PCMGUIAction.getNetworkProfile(new_network_profile_name);
+
+real_profile_description = nmodify_network_profile_table.getCell("DESCRIPTION").innerText();
+Assert.isEqual(real_profile_description , expected_network_profile_modify_description, "Modify network profile failed, the expected network profile description is: " 
+            + expected_network_profile_modify_description + ", the real network profile description is: " + real_profile_description + ".");
+
+/* Delete network profile */
+PCMGUIAction.DeleteNetworkProfile(new_network_profile_name);
+
+result_message = PCMGUIAction.getGUIMessage("removed");
+Assert.findKeywords(result_message, "removed.");
+End Network_Profile_case_1_3_4
+
+//===========================================================================================================================
+
+Begin Kit_case_1
+#testscript
+#desc="add kit"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+kit_short_name = "testkit";
+
+on(MN_IP)
+{  
+	
+	PCMAction.buildAddKit(kit_short_name);
+	o1= Shell.cmd("pty /opt/xcat/bin/lsdef -t kit");
+	Assert.findKeywords(o1, kit_short_name);
+	Shell.cmd("pty /opt/pcm/web-portal/perf/1.2/bin/plcclient.sh -d pcmkitloader") | Assert.findKeywords("successfully");
+	
+}
+
+End Kit_case_1
+
+//=============================================================================================
+Begin Kit_case_2_13
+#testscript
+#desc="add/remove kit"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+
+kit_name = "testkit";
+kit_short_name = "testkit-1.0-1";
+node =CN1_NAME;
+mn_os=MN_OS;
+
+
+//select latest kit component
+PCMGUIAction.gotoComWidgetTreeNode("Resources", "Node Provisioning", "Kit Library");
+ components_hm = PCMGUIAction.getkitSummary(kit_short_name);
+HashMap<String, HashMap> componenthm =  components_hm.get("Components");
+component = ((String)componenthm.get("Components")).split(",");
+component1 = component[component.length-1];
+Shell.echo(component1);
+
+
+//Associate kit with image profile
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+HashMap<String, String> image_profile_param_hm = new HashMap<String, String>();
+image_profile_param_hm.put(PCMPageSettingParam.IMAGEPROFILE_KIT_COMPONENT, component1);
+
+PCMGUIAction.modifyImageProfile(STATEFUL_IMAGE, true, image_profile_param_hm);
+PCMGUIAction.br.waitElement(Cond.div(STATEFUL_IMAGE));
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+imgProfile_summary_hm = PCMGUIAction.getImageProfileSummary(STATEFUL_IMAGE);
+HashMap<String, String> kithm = (HashMap<String, String>)imgProfile_summary_hm.get("Kit Components");
+kitlist = ((String)kithm.get("Components")).split("\n");
+Shell.echo(kitlist);
+Assert.findKeywords(kitlist,component1);
+
+
+//Check the node 
+
+
+
+on(MN_IP)
+{
+	 if(mn_os.equals("ubuntu"))
+    {
+    	Shell.cmd("xdsh " + node + " dpkg -l |grep " + kit_name)| Assert.findKeywords(kit_name);
+    	
+    }
+    
+    else
+    {
+          //Shell.cmd("ssh " + node + "rpm -qa | grep " + kit_name)| Assert.findKeywords(kit_name);
+    }
+}
+
+End Kit_case_2_13
+
+//===================================================================================================
+Begin Kit_case_2_14
+#testscript
+#desc="add/remove kit"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting
+#features=OS_porting_Image_Profile,Provision
+
+kit_name = "testkit";
+kit_short_name = "testkit-1.0-1";
+node =CN1_NAME;
+mn_os=MN_OS;
+
+//select latest kit component
+PCMGUIAction.gotoComWidgetTreeNode("Resources", "Node Provisioning", "Kit Library");
+ components_hm = PCMGUIAction.getkitSummary(kit_short_name);
+HashMap<String, HashMap> componenthm =  components_hm.get("Components");
+component = ((String)componenthm.get("Components")).split(",");
+component1 = component[component.length-1];
+Shell.echo(component1);
+
+//Disassociate kit with image profile
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+HashMap<String, String> image_profile_param_hm = new HashMap<String, String>();
+image_profile_param_hm.put(PCMPageSettingParam.IMAGEPROFILE_KIT_COMPONENT, component1);
+
+PCMGUIAction.modifyImageProfile(STATEFUL_IMAGE, true, image_profile_param_hm);
+PCMGUIAction.br.waitElement(Cond.div(STATEFUL_IMAGE));
+
+
+//remove kit
+PCMGUIAction.gotoComWidgetTreeNode("Resources", "Node Provisioning", "Kit Library");
+PCMGUIAction.removeKit(kit_short_name);
+result_message = PCMGUIAction.getGUIMessage();
+Assert.findKeywords(result_message, "Removed kits");
+
+
+//restore, remove folder for testkit.
+
+on(MN_IP)
+{
+	//Shell.cmd("rm -rf " + Environment.TG_TOP() + "/testkit") | Assert.notFindKeywords("failed");
+}
+
+End Kit_case_2_14
+
+//=======================================================================================================================================
+Begin unmanaged_device_management_gui
+#testscript
+#desc=add a new device 
+#author="liyongda"
+#group="pcm_gui"
+#priority=P1
+#keyword=hpc_smoke_test
+#features=Unmanaged device 
+#timeout=600s
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Infrastructure", "Networks", "Reserved IPs");
+
+unmanagement_device_name = "test-unmanaged-device";
+unmanagement_device_ip = "192.168.11.224";
+
+/*+++++++++++++++++++++Add a new device++++++++++++++++++++++++++++*/
+PCMGUIAction.addReservedIPs(unmanagement_device_name, unmanagement_device_ip);
+result_message = PCMGUIAction.getGUIMessage("Added");
+Assert.findKeywords(result_message, "Added reserved IP");
+unmanagement_device_table = PCMGUIAction.getReservedIPs(unmanagement_device_name);
+Assert.larger(unmanagement_device_table.size(), 0, "added unmanagement device does not exist!");
+
+/*+++++++++++++++++++++Remove device++++++++++++++++++++++++++++*/
+PCMGUIAction.removeReservedIPs(unmanagement_device_name);
+result_message = PCMGUIAction.getGUIMessage("Removed", 600);
+Assert.findKeywords(result_message, "Removed reserved IP");
+End unmanaged_device_management_gui
+
+/////////////////////////////////////////////////////////////////////////////
+
+Begin CreateAlertPolicy
+#testscript
+#desc=add a alert definition
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created alert policy.");
+
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicy();
+}
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+End CreateAlertPolicy
+//-----------------------------------------------------
+
+
+Begin DisableAlertPolicy
+#testscript
+#desc=add a alert definition
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created alert policy.");
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicy();
+}
+
+
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Disabled", "Assert failed.");
+End DisableAlertPolicy
+
+//-----------------------------------------------------
+
+Begin EnableAlertPolicy
+#testscript
+#desc=add a alert definition
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created alert policy.");
+
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicy();
+}
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(!checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.enableAlertPolicy();
+}
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Enabled", "Assert failed.");
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+	PCMGUIAction.selectAlertPolicy(alert_name);
+	PCMGUIAction.disableAlertPolicy();
+}
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Disabled", "Assert failed.");
+
+End EnableAlertPolicy
+//------------------------------------------
+
+#Begin ModifyAlertPolicyName
+#testscript
+#desc=add a alert definition
+#author="ouliqi"
+#group="pcm_gui"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+//alert="aaa1234567";
+Alert_prefix = System.currentTimeMillis();
+
+alert="newAlertByDefault";
+alert_name = alert + Alert_prefix;
+modify_alert_name = "modify" + Alert_prefix;
+
+
+
+
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(modify_alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created");
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+
+
+
+HashMap<String, String> modify_alert_hm = new HashMap<String, String>();
+modify_alert_hm.put("alertName",   modify_alert_name);
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.focusAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicyBySummaryPane();
+}
+
+PCMGUIAction.selectAlertPolicy(alert_name);
+//PCMGUIAction.modifyAlertPolicy(alert_name, alert_hm);
+PCMGUIAction.modifyAlertPolicy(modify_alert_hm);
+
+
+result_message = PCMGUIAction.getGUIMessage("Modified", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Modified alert policy.");
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", modify_alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(modify_alert_name).getCell("Name").innerText();
+Assert.isEqual(modify_alert_name, real_alertPolicy_name, "Assert failed.");
+#End ModifyAlertPolicyName
+//-----------------------------------------
+Begin DisableAlertPolicyNamebySummaryPane
+#testscript
+#desc="Disable Alert Policy Name by summary pane"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created alert policy.");
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.focusAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicyBySummaryPane();
+}
+
+
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Disabled", "Assert failed.");
+
+End DisableAlertPolicyNamebySummaryPane
+//------------------------------
+
+Begin EnableAlertPolicyNamebySummaryPane
+#testscript
+#desc="Enable Alert Policy Name by summary pane"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+alert_level="Warning";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+//return_msg=PCMGUIAction.getGUIMessage();
+result_message = PCMGUIAction.getGUIMessage("Created", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Created alert policy.");
+
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+real_alertPolicy_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Name").innerText();
+Assert.isEqual(alert_name, real_alertPolicy_name, "Assert failed.");
+
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+	PCMGUIAction.selectAlertPolicy(alert_name);
+	PCMGUIAction.disableAlertPolicy();
+}
+
+result_message = PCMGUIAction.getGUIMessage("Disabled", "Alert Policies", 600);
+Shell.echo(result_message);
+Assert.findKeywords(result_message, "Disabled alert policy.");
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(!checkisAlertEnabled)
+{
+    PCMGUIAction.focusAlertPolicy(alert_name);
+    PCMGUIAction.enableAlertPolicyBySummaryPane();
+}
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Enabled", "Assert failed.");
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+	PCMGUIAction.selectAlertPolicy(alert_name);
+	PCMGUIAction.disableAlertPolicy();
+}
+real_alert_status=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Shell.echo(real_alert_status);
+Assert.isEqual(real_alert_status, "Disabled", "Assert failed.");
+End EnableAlertPolicyNamebySummaryPane
+//-----------------------------------
+Begin CreateAlertPolicyByChangeNodeScope
+#testscript
+#desc="Create Alert Policy By Change Node Scope"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+scopeOfTarget="Management Node";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+alert_hm.put("scopeOfTarget", scopeOfTarget);
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicy();
+}
+
+alert_policy_check_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Scope").innerText();
+Assert.isEqual(scopeOfTarget, alert_policy_check_name, "Assert failed.");
+
+End CreateAlertPolicyByChangeNodeScope
+//----------------------------------
+
+
+Begin CreateAlertPolicyByChangeEnableAfterCreation
+#testscript
+#desc="Create Alert Policy By Change Node Scope"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+doDisable="doDisable";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+alert_hm.put("doDisable", doDisable);
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+
+alert_policy_check_name=PCMGUIAction.getAlertPolicy(alert_name).getCell("Policy_Status").innerText();
+Assert.isEqual("Disabled", alert_policy_check_name, "Assert failed.");
+
+
+End CreateAlertPolicyByChangeEnableAfterCreation
+//---------------------------------
+
+
+Begin CreateAlertPolicywithNullName
+#testscript
+#desc="Create Alert Policy with Null Name"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert_name = "";
+
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+PCMGUIAction.createAlertPolicywithSimpleCreate();
+
+return_msg = PCMGUIAction.br.waitElement(Cond.id("alertPoliciesNewMessageDisplayBody_Parent")).innerText().trim();
+Shell.echo(return_msg);
+Assert.findKeywords(return_msg, "Alert name should not be null.");
+
+End CreateAlertPolicywithNullName
+//-------------------------
+
+#Begin CreateAlertPolicywithBlankName
+#testscript
+#desc="Create Alert Policy with Null Name"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+alert_name = "   ";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts","Alert Policies");
+
+PCMGUIAction.createAlertPolicywithSimpleCreate(alert_name); //give blank 
+
+
+return_msg = PCMGUIAction.br.waitElement(Cond.id("alertPoliciesNewMessageDisplayBody_Parent")).innerText().trim();
+Shell.echo(return_msg);
+Assert.findKeywords(return_msg, "Alert name should not be null.");
+
+
+
+
+#End CreateAlertPolicywithBlankName
+//-----------------------------------------
+
+#Begin CreateAlertPolicyByChangeRuleAlertCondition
+#testscript
+#desc="Create Alert Policy"
+#author="ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+//alert_level="Warning";
+
+ruleComb = "All";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+//alert_hm = null;
+
+
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+
+alert_hm.put("ruleComb", ruleComb);
+
+restoreCmd1="PCMGUIAction.selectAlertPolicy(alert_name);";
+restoreCmd2="PCMGUIAction.deleteAlertPolicy();";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+alert_filter_hm= new HashMap<String, String>();
+alert_filter_hm.put("Name", alert_name);
+PCMGUIAction.setAlertFilter(alert_filter_hm);
+
+checkisAlertEnabled = PCMGUIAction.isAlertEnabled(alert_name);
+if(checkisAlertEnabled)
+{
+    PCMGUIAction.selectAlertPolicy(alert_name);
+    PCMGUIAction.disableAlertPolicy();
+}
+
+#End  CreateAlertPolicyByChangeRuleAlertCondition
+//----------------------------
+Begin CreateAlertPolicyByAddRuleAlertMetric
+#testscript
+#desc="Create Alert Policy"
+#author="Ouliqi"
+#group="pcm_gui_ie"
+#priority=P1
+#keyword=alert
+#features=alert definition
+
+alert="newAlertByDefault";
+Alert_prefix = System.currentTimeMillis();
+alert_name = alert + Alert_prefix;
+
+//alert_desc="desc" +  Alert_prefix;
+//alert_level="Warning";
+
+ruleComb = "All";
+
+HashMap<String, String> alert_hm = new HashMap<String, String>();
+//alert_hm = null;
+
+
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Alerts", "Alert Policies");
+
+
+alert_hm.put("ruleComb", ruleComb);
+PCMGUIAction.createAlertPolicy(alert_name, alert_hm);
+
+
+End  CreateAlertPolicyByAddRuleAlertMetric
+
+
+//======================================================================================================
+
+
+Begin Copy_resource_report
+#testscript
+#desc="copy a report"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=report
+#features=resource repot
+
+
+report_name="System Entitlement";
+new_report_name="copy_report";
+
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Resource Reports");
+dataTable = PCMGUIAction.getResourceReport(new_report_name);
+//if report exists,delete it before create
+if(dataTable.size() == 1)
+{
+    PCMGUIAction.deleteResourceReport(new_report_name);
+}
+
+//create a report
+PCMGUIAction.copyResourceReport(new_report_name,report_name);
+return_msg=PCMGUIAction.getGUIMessage("created");
+Assert.findKeywords(return_msg, "is created");
+
+
+End  Copy_resource_report
+//========================================================================================================================
+
+Begin Modify_resource_report
+#testscript
+#desc="modify a report"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=report
+#features=resource repot
+
+
+report_name="System Entitlement";
+new_report_name="copy_report";
+REPORT_SUMMARY="testing";
+REPORT_DESCRIPTION="just for testing";
+REPORT_QUERY_STRING  = "SELECT TIME_STAMP, TIME_STAMP_GMT, CAST('Nodes' AS VARCHAR(20)) AS HOST_STATUS, SUM(HOST_UNAVAILABLE)+SUM(HOST_OK) AS COUNT_VALUE\\n" + 
+                        "FROM LIM_CLUSTER_INFO\\n" +
+                        "WHERE (TIME_STAMP >= TO_TIMESTAMP(TO_CHAR(CURRENT_TIMESTAMP - INTERVAL '2 hour', 'yyyy-MM-dd HH24:MI') || ':00', 'yyyy-MM-dd HH24:MI:SS') AND TIME_STAMP < TO_TIMESTAMP(TO_CHAR(CURRENT_TIMESTAMP, 'yyyy-MM-dd HH24:MI') || ':00', 'yyyy-MM-dd HH24:MI:SS'))\\n" + 
+                        "GROUP BY TIME_STAMP,TIME_STAMP_GMT\\n" + 
+                        "ORDER BY TIME_STAMP\\n";
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Resource Reports");
+tmpTable = PCMGUIAction.getResourceReport(new_report_name);
+if(tmpTable.size() == 0)
+{
+	PCMGUIAction.copyResourceReport(new_report_name,report_name);	
+}
+
+PCMGUIAction.modifyResourceReport(new_report_name, REPORT_SUMMARY, REPORT_DESCRIPTION, REPORT_QUERY_STRING);
+return_msg=PCMGUIAction.getGUIMessage("modified");
+Assert.findKeywords(return_msg, "is modified");
+
+
+End  Modify_resource_report
+
+//====================================================================================================================================
+Begin Produce_resource_report
+#testscript
+#desc="produce a report"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=report
+#features=resource repot
+
+
+report_name="System Entitlement";
+new_report_name="copy_report";
+REPORT_TYPE="Sample";
+
+PCMGUIAction.gotoComWidgetTreeNode("Resources","Resource Reports");
+PCMGUIAction.produceResourceReport(report_name);
+
+    
+/*++++++++++++++++++Check whether display the report+++++++++++++++++++*/
+//tmpShowFrame = br.waitElement(Cond.tag("iframe"),Cond.id("iframeShowChart"));
+if(REPORT_TYPE == "Sample")
+	tmpReportChart = PCMGUIAction.br.waitElement(Cond.tag("div"),Cond.id("chartdiv"));
+
+else if(REPORT_TYPE == "Custom")
+	tmpReportChart = PCMGUIAction.br.waitElement(Cond.tag("div"),Cond.id("contentObjectsId"));
+
+
+
+WAIT_FOR_VIEW_REPORT = 10s;
+Shell.sleep(WAIT_FOR_VIEW_REPORT);
+
+
+End  Produce_resource_report
+//=========================================================================================================================
+
+
+
+Begin User_auth_Installation_Case_4 
+#testscript
+#desc="Enable LDAP on MN"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting,ldap
+#features=User auth Installation
+ 
+ /*
+  Pre-condition:
+   1. Shutdown PCMD and WEBGUI service
+   2. Prepare LDAP server
+  */
+
+ldapServer = LDAP_SERVER;
+ldapPWD = LDAP_SERVER_PWD;
+ on(MN_IP)  
+{
+      o1 = Shell.cmd( "pty pcmadmin service stop --service PCMD ");
+      Assert.findKeywords(" already stopped") ;
+      
+      o2 = Shell.cmd( "pty pcmadmin service stop --service WEBGUI ");
+      Assert.findKeywords(" already stopped") ;
+      
+      o = Shell.cmdbg( "pty /opt/pcm/libexec/enableLDAP.sh");
+      o.expectSend(new String[]{
+         "Type the URL of the LDAP server (for example, ldap://LDAP_server:389)", "ldap://"+ldapServer+":389\n",
+         "Type the base domain where users and groups will be retrieved", " dc=example,dc=com\n",
+         "Type the distinguished name of the LDAP user mapped to IBM Platform Cluster Manager", "cn=Manager,dc=example,dc=com\n",
+         "Type the password for the mapped user", ldapPWD + "\n",
+         "Enable base domain LDAP users", "y\n"});
+         
+         history = o.getHistory();
+         Assert.notFindKeywords(history, "FAILED");
+         
+        // check the log
+        //Shell.cat("/opt/pcm/pcmd/log/pcmd.log") | Assert.notFindKeywords("ERROR");
+        
+        //Start PCMD and GUI service
+        Shell. cmdi("pcmadmin service start --service PCMD") | Assert.findKeywords("already started");
+        Shell. cmdi("pcmadmin service start --service WEBGUI") | Assert.findKeywords("already started");
+        
+        // check the root whether log GUI
+        //PCMGUIAction.gotoComWidgetTreeNode("Resources","Node Provisioning", "Provisioning Templates", "Image Profiles");
+}    
+
+
+Factory.destoryAll();
+Shell.sleep(15s);
+BrowserFactory.FIREFOX_MODULE = BrowserFactory.FIREFOX_GUI;
+BrowserFactory  Factory = BrowserFactory.getInstance("localhost", SE.CASE_SHARED_DIR());               
+ Window br = Factory.create();
+ br.navigate("http://" + WEBGUI_IP);
+ PCMGUIAction.setBrowserObject(br);
+ PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+End User_auth_Installation_Case_4 
+
+//=========================================================================================
+#Begin User_auth_login_GUI_Case_4_5_7
+#testscript
+#desc="Switch user base from OS to LDAP"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting,ldap
+#features=User auth Installation
+
+/*
+pre-condition:
+1. Normal OS user is created
+2. LDAP is enabled
+3. Assign OS user as SA
+steps:
+1. assign ldap user as SA
+2. then log gui with ldap user
+3. check root user login GUI
+4. check os normal user login gui
+*/
+
+os_user=OS_USER;
+os_user_pwd=OS_USER_PWD;
+ldap_user=LDAP_USER;
+ldap_user_pwd=LDAP_USER_PWD;
+
+//assgin LDAP user as SA
+PCMGUIAction.gotoComWidgetTreeNode("System & Settings", "User Assignments");
+PCMGUIAction.assignUsrAccount(LDAP_USER);
+return_msg = PCMGUIAction.getGUIMessage("successfully");
+Assert.findKeywords(return_msg, "The system successfully assigned the administrator role to users or groups " + LDAP_USER);
+//Use this ldap user login GUI
+PCMGUIAction.logout();
+PCMGUIAction.logon(LDAP_USER, LDAP_USER_PWD);
+//check root user login GUI
+PCMGUIAction.logout();
+PCMGUIAction.logon(WEBGUI_USERID, WEBGUI_PASSWORD);
+//check OS user login GUI
+PCMGUIAction.logout();
+PCMGUIAction.logonFailed(OS_USER, OS_USER_PWD);
+
+#End User_auth_login_GUI_Case_4_5_7
+
+//=========================================================================================
+
+Begin Create_account
+#testscript
+#desc="Create account after enabled LDAP"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting,ldap
+#features=Account mgt
+
+/*
+1. Install PCM with AE entitlement file
+2. LDAP is enabled
+*/
+
+// Define test env variables, LDAP server already defined in the PCM.xml
+ACCOUNT_NAME = "yaheng";
+ACCOUNT_DESC = "Test creating account";
+SEVER_LIMIT = "manual";
+SERVER_NUM = "10";
+
+USER_GROUP1 = LDAP_USER_GROUP1;
+USER_GROUP2 = LDAP_USER_GROUP2;
+USER_NAME_AA1 = LDAP_USER1;
+USER_NAME_AA2 = LDAP_USER3;
+
+
+PCMGUIAction.gotoComWidgetTreeNode("System & Settings", "Accounts");
+HashMap<String,String> accountInfo = new HashMap<String, String>();
+accountInfo.put( "accountName", ACCOUNT_NAME);
+accountInfo.put( "accountDescription", ACCOUNT_DESC);
+accountInfo.put( "serverLimit", SEVER_LIMIT);
+//accountInfo.put( "serverNum", SERVER_NUM);
+
+if(SEVER_LIMIT.equals("manual"))
+{
+    accountInfo.put("serverNum",SERVER_NUM);
+}
+
+ArrayList<String> userGroup = new ArrayList<String>();
+ArrayList<String> userNameAA = new ArrayList<String>();
+userGroup.add(USER_GROUP1);
+userGroup.add(USER_GROUP2);
+userNameAA.add(USER_NAME_AA1);
+userNameAA.add(USER_NAME_AA2);
+
+HashMap<String, ArrayList<String>> userInfo = new HashMap<String, ArrayList<String>>();
+userInfo.put( "userGroup", userGroup);
+userInfo.put( "userNameAA", userNameAA);
+
+//Create account
+PCMGUIAction.createClusterAccount(accountInfo,userInfo);
+return_msg=PCMGUIAction.getGUIMessage("Account");
+Assert.findKeywords(return_msg, "Account added");
+//real_account_name = PCMGUIAction.getClusterAccount(ACCOUNT_NAME).getCell("accountName").innerText();
+//Assert.isEqual(ACCOUNT_NAME, real_account_name, "Assert failed.");
+
+End Create_account
+
+//==================================================================
+Begin Modify_account
+#testscript
+#desc="Modify account after enabled LDAP"
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting,ldap
+#features=Account mgt
+
+
+ACCOUNT_NAME = "yaheng";
+ACCOUNT_DESC = "just test creating account";
+SEVER_LIMIT = "manual";
+SERVER_NUM = "20";
+
+PCMGUIAction.gotoComWidgetTreeNode("System & Settings", "Accounts");
+HashMap<String,String> accountInfo = new HashMap<String, String>();
+//accountInfo.put( "accountName", ACCOUNT_NAME);
+accountInfo.put( "accountDescription", ACCOUNT_DESC);
+accountInfo.put( "serverLimit", SEVER_LIMIT);
+
+
+if(SEVER_LIMIT.equals("manual"))
+{
+    accountInfo.put("serverNum",SERVER_NUM);
+}
+
+// modify the account
+PCMGUIAction.modifyClusterAccount(ACCOUNT_NAME,accountInfo);
+
+tmpTable = PCMGUIAction.getClusterAccount(ACCOUNT_NAME);
+
+return_msg=PCMGUIAction.getGUIMessage("Account");
+Assert.findKeywords(return_msg, "Account updated");
+
+End Modify_account
+
+//================================================================================
+
+Begin Assign_account_to_AA
+#testscript
+#desc="Assign users from Accounts page, check  \"Assign users\" button "
+#author="yaheng"
+#group="pcm_gui"
+#priority=P1
+#keyword=regression, OS_porting,ldap
+#features=Account mgt
+
+ACCOUNT_NAME = "yaheng";
+
+PCMGUIAction.gotoComWidgetTreeNode("System & Settings", "Accounts");
+PCMGUIAction.assignusersasAA(ACCOUNT_NAME);
+PCMGUIAction.assignUsrAccount(LDAP_USER);
+return_msg=PCMGUIAction.getGUIMessage("system");
+Assert.findKeywords(return_msg, "The system successfully updated the selected account");
+
+//use this user login GUI
+PCMGUIAction.logout();
+PCMGUIAction.logon(LDAP_USER, LDAP_USER_PWD);
+//Check the AA login, the navigation tree node changes
+ispcmae = PCMGUIAction.br.waitElement(Cond.id("treeViewContent")).findElements(Cond.span("Resources"));
+Assert.isNull(ispcmae); 
+
+End Assign_account_to_AA
+
+//================================================================================================
+
+#Begin LSF_OOB_Cluster_Template_Case_9
+#testscript
+#auth="yaheng"
+#desc="Create LSF cluster via AA"
+#group="pcm_gui"
+#keyword=regression, OS_porting
+#feature= "Cluster management"
+
+/*
+pre-condition:
+1.  Some nodes are provisioned in the system
+2.  Enable LDAP server
+3.  OOB LSF template is already publish
+steps:
+1. Create AA account
+2. Assign OOB LSF template to this AA
+3. Login GUI with AA user, create LSF cluster
+*/
+
+
+// Create AA account
+ACCOUNT_NAME = "yaheng1";
+ACCOUNT_DESC = "Test creating account";
+SEVER_LIMIT = "manual";
+SERVER_NUM = "10";
+
+USER_GROUP1 = LDAP_USER_GROUP1;
+USER_GROUP2 = LDAP_USER_GROUP2;
+USER_NAME_AA1 = LDAP_USER;
+USER_NAME_AA2 = LDAP_USER3;
+
+PCMGUIAction.gotoComWidgetTreeNode("System & Settings", "Accounts");
+HashMap<String,String> accountInfo = new HashMap<String, String>();
+accountInfo.put( "accountName", ACCOUNT_NAME);
+accountInfo.put( "accountDescription", ACCOUNT_DESC);
+accountInfo.put( "serverLimit", SEVER_LIMIT);
+
+if(SEVER_LIMIT.equals("manual"))
+{
+    accountInfo.put("serverNum",SERVER_NUM);
+}
+
+ArrayList<String> userGroup = new ArrayList<String>();
+ArrayList<String> userNameAA = new ArrayList<String>();
+userGroup.add(USER_GROUP1);
+userGroup.add(USER_GROUP2);
+userNameAA.add(USER_NAME_AA1);
+userNameAA.add(USER_NAME_AA2);
+
+HashMap<String, ArrayList<String>> userInfo = new HashMap<String, ArrayList<String>>();
+userInfo.put( "userGroup", userGroup);
+userInfo.put( "userNameAA", userNameAA);
+
+//Create account
+
+restoreCmd="PCMGUIAction.deleteClusterAccount(ACCOUNT_NAME);";
+PCMGUIAction.addRestoreAction(restoreCmd);
+
+PCMGUIAction.createClusterAccount(accountInfo,userInfo);
+return_msg=PCMGUIAction.getGUIMessage("Account");
+Assert.findKeywords(return_msg, "Account added");
+
+
+//assign OOB LSF tempalte to this AA
+PCMGUIAction.gotoComWidgetTreeNode("Clusters", "Cluster Templates");
+PCMGUIAction.assignClusterTemplate("LSF", "yaheng1");
+
+// Login GUI via this AA user, create LSF cluster
+PCMGUIAction.logout();
+PCMGUIAction.logon(LDAP_USER, LDAP_USER_PWD);
+PCMGUIAction.gotoComWidgetTreeNode("Clusters","Clusters");
+HashMap<String, String> cluster_hm = new HashMap<String, String>();
+cluster_hm.put("template", "LSF");
+cluster_hm.put("User-defined variables", "PAC_INSTALL:Y,PMPI_INSTALL:Y,LSF_SHARE_CN:Y");
+cluster_name = "test_LSF";
+cluster_hm.put("name", cluster_name);
+
+//delete the cluster
+restoreCmd1="PCMGUIAction.selectCluster(cluster_name);";
+restoreCmd2="PCMGUIAction.deleteCluster(true);Shell.sleep(60s);";
+PCMGUIAction.addRestoreAction(restoreCmd1 + "\n" + restoreCmd2);
+
+PCMGUIAction.createCluster(cluster_hm); 
+return_msg=PCMGUIAction.getGUIMessage("Created");
+Assert.findKeywords(return_msg, "Created the following cluster");
+real_cluster_name=PCMGUIAction.getCluster(cluster_name).getCell("Name").innerText();
+Assert.isEqual(cluster_name, real_cluster_name, "Assert failed.");
+
+status = PCMGUIAction.getClusterStatus(cluster_name);
+Shell.echo(status);
+Assert.findKeywords("Provisioning");
+
+
+
+// Check the cluster status after created
+ PCMGUIAction.waitClusterStatus(cluster_name, "Active", CLUSTER_TIMEOUT);
+
+
+//get the which servers in the cluster
+PCMGUIAction.logout();
+PCMGUIAction.logon(LDAP_USER, LDAP_USER_PWD);
+cluster_name = "test_LSF";
+PCMGUIAction.gotoComWidgetTreeNode("Clusters","Clusters");
+
+// Click "Options" set cluster tier to the default column
+HashMap<String, Boolean> metrics = new HashMap<String, Boolean>();
+metrics.put("Cluster Tier", true);
+PCMGUIAction.setServerOptions(cluster_name, null, null, null, metrics);
+
+
+master=PCMGUIAction.getServersByTier(cluster_name, "LSFMaster").get(0);
+cn1_name = master;
+
+compute=PCMGUIAction.getServersByTier(cluster_name, "LSFCompute").get(0);
+cn2_name = compute;
+
+
+// Check the LSF, PAC PMPI installed after created
+
+on(MN_IP)
+{ 
+    //check events log 
+    o1 = Shell.cmd("ls /opt/pcm/pcmd/log/clusters/*.log |awk 'END{print}'").get(0);
+    PCMAction.checkLog(new File(o1));
+    
+     //Check LSF master and cn
+    Shell.cmd("ssh " + cn1_name + "  ls /usr/share/ | grep lsf")|Assert.findKeywords("lsf");
+    Shell.cmd("ssh " + cn1_name + " lsid") | Assert.findKeywords("IBM Platform LSF Standard ");
+    Shell.cmd("ssh " + cn2_name + " bhosts") | Assert.findKeywords("ok");
+    
+    //Check LSF share to CN
+    Shell.cmd("ssh " + cn1_name + " exportfs | grep /usr/share/lsf") | Assert.findKeywords("/usr/share/lsf");
+    Shell.cmd("ssh " + cn2_name + "  df -h | grep /usr/share/lsf") | Assert.findKeywords("/usr/share/lsf");
+
+    //Check PAC install
+    Shell.cmd("ssh " + cn1_name + " ls /opt | grep pac")|Assert.findKeywords("pac");
+    
+    
+    //Check PMPI install later
+    Shell.cmd("ssh " + cn2_name + " ls /opt/ibm | grep platform_mpi") | Assert.findKeywords("platform_mpi");
+    
+}
+#End LSF_OOB_Cluster_Template_Case_9
