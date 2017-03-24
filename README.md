@@ -1,6 +1,16 @@
 # interview
 interview prepare
 
+Day1 ： 需要学些 singleton等设计模式的简单实现面试
+需要二叉树的便利的左右查找等
+version的递归比较列表
+0.1	《《《 2.11 1.01 1.0. 1
+
+
+需要学习复杂度算法的技巧
+L ＝ ［ 1 ， 2 ， 3 ， 5 ＝ 目标 14 ］
+复杂度为n 每个元素便利不要超过2遍 ，
+
 1. To be read:
 a. normal py questions refer to https://taizilongxu.gitbooks.io/stackoverflow-about-python/content/index.html
 b. Normal linux questions refer to weinan's git
