@@ -21,7 +21,7 @@ pwd = "123"
 def login(username,password):
     browser = webdriver.Firefox()
     browser.get("https://note.wiz.cn/login")
-    browser.implicitly_wait(4)
+    browser.implicitly_wait(10)
     h = browser.current_window_handle
     browser.find_element_by_xpath(".//*[@id='openid-login']/div/div[2]/a/i").click()
     browser.implicitly_wait(4)
@@ -36,6 +36,7 @@ def login(username,password):
     #Firebug > console > window.name
     browser.find_element_by_xpath(".//*[@id='userId']").clear()
     time.sleep(2)
+    browser.find_element_by_xpath(".//*[@id='userId']").clear()
     browser.find_element_by_xpath(".//*[@id='userId']").send_keys(u)
     browser.find_element_by_xpath(".//*[@id='passwd']").clear()
     time.sleep(2)
