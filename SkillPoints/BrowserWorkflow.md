@@ -142,9 +142,33 @@ refer to [http://t.im/1c3ol](http://t.im/1c3ol)
    * > . 将 DOM 与 CSSOM 合并成一个渲染树。
    * > . 根据渲染树来布局，以计算每个节点的几何信息。
    * > . 将各个节点绘制到屏幕上。
+   
+   浏览器背后的故事，简而言之，当服务器提供了资源之后（HTML，CSS，JS，图片等），浏览器会执行下面的操作：
+   解析 —— HTML，CSS，JS
+   渲染 —— 构建 DOM 树 -> 渲染 -> 布局 -> 绘制
 
 ![图](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/images/render-tree-construction.png?hl=zh-cn)
 
 浏览器的架构图 
 
 ![参考](http://hi.csdn.net/attachment/201106/8/2143330_1307526705wVJ1.png)  
+
+## 在浏览器输入 www.baidu.com 后面执行的全部过程 ##
+   最权威的解答参考 http://igoro.com/archive/what-really-happens-when-you-navigate-to-a-url/
+   完整的解答参考 https://github.com/skyline75489/what-happens-when-zh_CN/blob/master/README.rst
+
+从流程上来说：
+> * . 浏览器输入地址
+> * . 浏览器根据地址进行DNS查询和解析
+> * . 浏览器构造HTTP request 发送到web server
+> * . web server进行响应，返回一个 HTML reponse
+> * . 浏览器解析收到的HTML文档并开始渲染
+
+从网络协议角度来说
+> * . 物理层：RJ45、CLOCK、IEEE802.3 （中继器，集线器）
+> * . 数据链路：包通过链路层发送到路由器，发送ARP请求查找目的地址，然后发送IP数据包到达服务器的地址。
+> * . 网络层：IP：不关心应用层或者传输层的东西，主要目的是查找路由表决定通过哪个路径到达服务器
+> * . 传输层：TCP ：通过TCP进行封装数据包，把HTTP会话请求分成报文段，并添加源和目的地端口，并使用IP层的IP地址来查找目的端
+> * . 会话层：NFS、SQL、NETBIOS、RPC
+> * . 表示层：JPEG、MPEG、ASII
+> * . 应用层：客户端浏览器通过DNS解析到w网站的的IP地址，然后发起一个HTTP会话到服务器端
