@@ -105,8 +105,10 @@ web浏览器与web服务器之间通过HTTP协议进行通信的过程。所以�
    refer to [http://t.im/1c3lw](http://t.im/1c3lw)
    传输层的协议包括TCP协议和UDP协议，TCP协议系统内核会给其分配一个发送缓冲区和接收缓冲区，当应用层连续执行多次操作时，TCP先将这些数据写入TCP发送缓冲区中，当TCP模块真正开始发送数据时，发送缓冲区中这些等待发送的数据可能被封装成一个或多个TCP数据报文段发出，所以，TCP模块发出的TCP报文段的个数和应用程序执行的写操作次之间没有固定的联系。
    
- TCP的建立是三次握手，![如图](https://leanote.com/api/file/getImage?fileId=57c92e44ab644135ea06c6bd)
- TCP协议的头部构造，![图](https://leanote.com/api/file/getImage?fileId=57c92e44ab644135ea06c6be)
+ TCP的建立是三次握手
+![如图](https://leanote.com/api/file/getImage?fileId=57c92e44ab644135ea06c6bd)
+ TCP协议的头部构造
+![图](https://leanote.com/api/file/getImage?fileId=57c92e44ab644135ea06c6be)
  
    * > . 客户端的TCP进程也首先创建传输控制模块TCB，然后向服务端发出连接请求报文段，该报文段首部中的SYN=1，ACK=0，同时选择一个初始序号seq=i。TCP规定，SYN=1的报文段不能携带数据，但要消耗掉一个序号。这时，TCP客户进程进入SYN—SENT（同步已发送）状态，这是 TCP连接的第一次握手。
    
@@ -114,7 +116,8 @@ web浏览器与web服务器之间通过HTTP协议进行通信的过程。所以�
    
    * > . TCP客户端进程收到服务端进程的确认后，还要向服务端给出确认。确认报文段的ACK=1，确认号ack=j+1，而自己的序号为seq=i+1。TCP的标准规定，ACK报文段可以携带数据，但如果不携带数据则不消耗序号，因此，如果不携带数据，则下一个报文段的序号仍为seq=i+1。这时，TCP连接已经建立，客户端进入ESTABLISHED（已建立连接）状态。这是TCP连接的第三次握手，可以看出第三次握手客户端已经可以发送携带 数据的报文段了。 
    
-   当服务端收到确认后，也进入ESTABLISHED（已建立连接）状态。![连接](https://leanote.com/api/file/getImage?fileId=57c97450ab644135ea06cade)
+   当服务端收到确认后，也进入ESTABLISHED（已建立连接）状态。
+![连接](https://leanote.com/api/file/getImage?fileId=57c97450ab644135ea06cade)
 
 * > . 向目标服务器发送http请求
 
