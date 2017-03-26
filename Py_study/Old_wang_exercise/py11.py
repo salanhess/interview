@@ -5,8 +5,8 @@
 def info(a):
     '''一个我们不熟悉的方法'''
     a[0] = 'haha'
-a = [1, 2, 3]
 
+a = [1, 2, 3]
 info(a)
 print(a)
 

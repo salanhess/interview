@@ -175,9 +175,7 @@ assert type(uid_by_max_tweets_on_hour11) == str
 
 # 15 该文本里，哪个用户的源微博URL次数最多。 （要求：输出用户的uid，字符串格式。）
 
-uid_by_v_url = {k[
-
-keys['uid']]:0 for k in lines}
+uid_by_v_url = {k[keys['uid']]:0 for k in lines}
 for line in lines:
     uid = line[keys['uid']]
     if lines[keys['v_url']] != '':
