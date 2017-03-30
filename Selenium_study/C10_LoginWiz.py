@@ -8,8 +8,10 @@ import time
 #refer to http://www.cnblogs.com/yoyoketang/p/6128596.html
 #wait refer to https://blog.mozilla.org/webqa/2012/07/12/how-to-webdriverwait/
 #Need import correct username/password
-u = "test"
-pwd = "123"
+# u = "test"
+# pwd = "123"
+u = "sb20089@sina.com"
+pwd = "3264246ab"
 
 #Keypoints:
 #1. Wrap login/logout
@@ -56,7 +58,7 @@ def logout():
     time.sleep(3)
     t = browser.find_element_by_xpath(".//*[@id='login-tip']").text
     print(t)
-    browser.quit()
+    #browser.quit()
 
 
 if __name__ == "__main__":

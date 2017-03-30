@@ -1,121 +1,113 @@
 #coding=utf-8
+#算法复杂度参考 http://blog.sina.com.cn/s/blog_771849d301010ta0.html
 
-#冒泡排序 插入排序， 快速排序  等实现 ，需要能够讲述其复杂度
-
-#冒泡排序
+#left,right, loop
+#1. This is a test,so add time decorator to test
+#2. But 1000 random will cause sort_quick out of interation, then need to change sys.setrecursionlimit(1500)
+#3. But 50000 random will cause python error. then use find_recursionlimit.py to check, found current sys Max is 15200
 '''
-它重复地走访过要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。
-走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。
-时间复杂度 O(n^2)
+sort_bubble cost 18.666366 second
+sort_insert cost 10.140411 second
+sort_quick cost 11.785992000000004 second
+==============10000 END================
+sort_bubble cost 519.985739 second
+sort_insert cost 310.2120050000001 second
+Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
+-------------------
+Limit of 15200 is fine
+recurse
+add
+Segmentation fault: 11
+bogon:~ hbai$ python find_recursionlimit.py
 '''
-def bubble_sort(slist):
-    print("=====bubble_sort====")
-    for i in range(len(slist)-1):
-        #print("Before %s Time sort: %s" % (i,slist))
-        for j in range(len(slist)-i-1):
-            if slist[j] > slist[j+1]:
-                slist[j],slist[j+1] = slist[j+1],slist[j]
-            #print("After j[%s] Time sort: %s" % (j, slist))
-    return (slist)
+import time
 
-#插入排序
+def time_me(fn):
+    def _wrapper(*args,**kwargs):
+        start = time.clock()
+        fn(*args,**kwargs)
+        print("%s cost %s second" % (fn.__name__,time.clock()-start))
+    return _wrapper
 
-'''
-插入排序的基本操作就是将一个数据插入到已经排好序的有序数据中，从而得到一个新的、个数加一的有序数据，
-算法适用于少量数据的排序，时间复杂度为O(n^2)。
-是稳定的排序方法。插入算法把要排序的数组分成两部分：
-第一部分包含了这个数组的所有元素，但将待插入元素除外（让数组多一个空间才有插入的位置），
-而第二部分就只包含这一个元素（即待插入元素）。在第一部分排序完成后，再将这个最后元素插入到已排好序的第一部分中。
-时间复杂度 O(n^2)
-'''
-
-
-def insert_sort(nums):
-    #print("=====insert_sort====\nOriginal list is %s" % nums)
-    print("=====insert_sort====")
-    for i in range(1,len(nums)):
-        key = nums[i]
-        #print("In [%d],Current key is %d\nBefore sort list is %s" % (i,key,nums))
-        j = i-1
-        while j >=0:
-            if nums[j] > key:
-                nums[j+1],nums[j] = nums[j],key
-            j -=1
-        #print("Now list is %s" % nums)
-    return (nums)
-
-
-#快速排序
-'''
-通过一趟排序将要排序的数据分割成独立的两部分，
-其中一部分的所有数据都比另外一部分的所有数据都要小，
-然后再按此方法对这两部分数据分别进行快速排序，
-整个排序过程可以递归进行，以此达到整个数据变成有序序列。
-不稳定，时间复杂度 最理想 O(nlogn) 最差时间O(n^2)
-'''
-#这个算法必须要清楚，参考 http://blog.csdn.net/morewindows/article/details/6684558
-def quick_sort(lists, left, right):
-    #print("=====quick_sort====")
-    # 快速排序
+#@time_me 递归函数不适合使用装饰器
+#复杂度  O(nlog(n))
+def sort_quick(nums,left,right):
     if left >= right:
-        return lists
-    key = lists[left]
+        return nums
     low = left
     high = right
-    #print("Original list is: %s,left is %s, right is %s " % (lists, left, right))
+    key = nums[left]
     while left < right:
-        while left < right and lists[right] >= key:
-            right -= 1
-        lists[left] = lists[right]
-        while left < right and lists[left] <= key:
-            left += 1
-        lists[right] = lists[left]
-    lists[right] = key
-    #print("After sort with Key[%s], current list is %s" % (key,lists))
-    quick_sort(lists, low, left - 1)
-    quick_sort(lists, left + 1, high)
-    return lists
+        while left < right and nums[right] >= key:
+            right -=1
+        nums[left] = nums[right]
+        while left < right and nums[left] <=key:
+            left+=1
+        nums[right] = nums[left]
+    nums[right] = key
+    sort_quick(nums,left,low-1)
+    sort_quick(nums,low+1,high)
+    return nums
+
+@time_me
+#复杂度  O(n^2)
+def sort_insert(nums):
+    for i in range(1,len(nums)):
+        key = nums[i]
+        j = i -1
+        while j >= 0:
+            if nums[j] > key:
+                nums[j+1],nums[j] = nums[j],key
+            j -= 1
+    return nums
 
 
+@time_me
+#need switch key[j],key[j+1] after cmp,#复杂度  O(n^2)
+def sort_bubble(nums):
+    for i in range(0,len(nums)-1):
+        for j in range(0,len(nums)-i-1):
+            if nums[j] > nums[j+1]:
+                nums[j+1],nums[j] = nums[j],nums[j+1]
+    return nums
 
-l1 = [9,8,6,4,3,2,1]
-print(bubble_sort(l1))
-print(insert_sort(l1))
-l1 = [4,8,6,9,1,2,3]
-print(quick_sort(l1,0,len(l1)-1))
+# @time_me
+# def test(x,y):
+#     time.sleep(0.2)
+#     return True
+#
+# test(1,2)
 
+nums = [9,3,6,5,2,1]
+sort_bubble(nums)
+
+nums = [9,3,6,5,2,1]
+print(sort_insert(nums))
+
+nums = [9,3,6,5,2,1]
+start = time.clock()
+print(sort_quick(nums,0,len(nums)-1))
+print("%s cost %s second" % ("sort_quick",time.clock()-start))
+print("==============sample END================")
 import random
+nums = [int(10000*random.random()) for i in  range(10000)]
+sort_bubble(nums)
+sort_insert(nums)
+start = time.clock()
+import sys
+sys.setrecursionlimit(15000)
+sort_quick(nums,0,len(nums)-1)
+sys.setrecursionlimit(100)
+print("%s cost %s second" % ("sort_quick",time.clock()-start))
+print("==============10000 END================")
+# nums = [int(13000*random.random()) for i in  range(13000)]
+# sort_bubble(nums)
+# sort_insert(nums)
+# start = time.clock()
+# import sys
+# sys.setrecursionlimit(15000)
+# sort_quick(nums,0,len(nums)-1)
+# sys.setrecursionlimit(100)
+# print("%s cost %s second" % ("sort_quick",time.clock()-start))
+# print("==============13000 END================")
 
-
-# '''
-# 希尔排序(Shell Sort)是插入排序的一种。也称缩小增量排序，是直接插入排序算法的一种更高效的改进版本。
-# 希尔排序是非稳定排序算法。该方法因DL．Shell于1959年提出而得名。
-# 希尔排序是把记录按下标的一定增量分组，对每组使用直接插入排序算法排序；
-# 随着增量逐渐减少，每组包含的关键词越来越多，当增量减至1时，整个文件恰被分成一组，算法便终止
-# #但是这种排序算法不是太完善，所有不在此进行详细的讨论和学习，参考 https://www.zhihu.com/question/39288741
-# '''
-# #todo I don't know why the group is float after convert to int type already :(
-# def shell_sort(lists):
-#     print("=====insert_sort====\nOriginal list is %s" % lists)
-#     # 希尔排序
-#     count = len(lists)
-#     step = 2
-#     group = int(count / step)
-#     print("group is %s ,type is %s " % (group,type(group)))
-#     while group > 0:
-#         for i in range(0, int(group)):
-#             j = i + int(group)
-#             print("Index[%s]" % i)
-#             while j < count:
-#                 k = j - int(group)
-#                 key = lists[j]
-#                 while k >= 0:
-#                     if lists[k] > key:
-#                         lists[k + int(group)] = lists[k]
-#                         lists[k] = key
-#                     k -= int(group)
-#                 j += int(group)
-#             print(lists)
-#         group /= step
-#     print(lists)
-#shell_sort(l1)
