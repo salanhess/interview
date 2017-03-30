@@ -30,7 +30,8 @@ def login(id,pwd):
 
 #step2: Loop: Goto "dingdan guanli" > "fahuo"
 def fahuo():
-    browser.find_element_by_css_selector(".for_gaq").click()
+    browser.find_elements_by_xpath(".//*[@id='menu']/div/div[4]/a[1]").click()
+
     print(browser.find_elements_by_xpath(".deliver-goods.ng-scope"))
 
 #step3: logout
