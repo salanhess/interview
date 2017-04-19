@@ -4,7 +4,7 @@ import requests
 import HTMLParser
 
 #目前的问题： 只爬取了最上面的文章链接，手工拖拽滚动条获取的标题内容无法直接获取到，网上建议用selenium来解决
-
+#task1: use selenium scroll to the end,then get.
 
 def getHtml(url):
     header = {"User-Agent":'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.101 Safari/537.36'}
