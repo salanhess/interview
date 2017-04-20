@@ -8,13 +8,6 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import urllib2,os,time
 
-#HengHeng's link
-#url = 'http://www.jianshu.com/u/c0238b72b6f9'
-
-#UncleFan's link
-url = 'http://www.jianshu.com/u/73632348f37a'
-filename = r'info.txt'
-
 def scroll_top(driver):
     if driver.name == "chrome":
         js = "var q=document.body.scrollTop=0"
@@ -41,31 +34,43 @@ def write_text(filename, info):
         fp.write('\n'.encode('utf-8'))
         fp.write('\n'.encode('utf-8'))
 
-driver = webdriver.Firefox()
-driver.implicitly_wait(10)
-#driver.maximize_window()
-driver.get(url)
+def sroll_multi(driver,times=5,loopsleep=2):
+    #40 titles about 3 times
+    for i in range(times):
+        time.sleep(loopsleep)
+        print "Scroll foot %s time..." % i
+        scroll_foot(driver)
+    time.sleep(loopsleep)
 
-#40 titles about 3 times
-for i in range(5):
-    time.sleep(3)
-    print "Scroll foot %s time..." % i
-    scroll_foot(driver)
-time.sleep(2)
+#Note: titles is titles_WebElement type object
+def write_menu(filename,titles):
+    with open(filename, 'w') as fp:
+        pass
+    for title in titles:
+        if r'目录' not in title.text:
+            print "[" + title.text + "](" + title.get_attribute("href") + ")"
+            t = title.text.encode('utf-8')
+            t = title.text.replace(":", "：")
+            t = title.text.replace("|", "丨")
+            t = title.text.decode('utf-8')
+            write_text(filename, "[" + t + "](" + title.get_attribute("href") + ")")
+            #assert type(title) == "WebElement"
+            #print type(title)
 
-#<a class="title" href="/p/6f543f43aaec" target="_blank">《往事难如烟8》曾经的俱乐部（三）开大会</a>
+def main(url):
+    # <a class="title" href="/p/6f543f43aaec" target="_blank">《往事难如烟8》曾经的俱乐部（三）开大会</a>
+    driver = webdriver.Firefox()
+    driver.implicitly_wait(10)
+    # driver.maximize_window()
+    driver.get(url)
+    sroll_multi(driver)
+    titles = driver.find_elements_by_xpath('.//a[@class="title"]|.//a[target="_blank"]')
+    write_menu(filename, titles)
 
-titles = driver.find_elements_by_xpath('.//a[@class="title"]|.//a[target="_blank"]')
-with open(filename, 'w') as fp:
-    pass
-
-for title in titles:
-    if r'目录' not in title.text:
-        print "[" + title.text + "](" + title.get_attribute("href") + ")"
-        t = title.text.encode('utf-8')
-        t = title.text.replace(":", "：")
-        t = title.text.replace("|", "丨")
-        t = title.text.decode('utf-8')
-        write_text(filename, "[" + t + "](" + title.get_attribute("href") + ")")
-        #assert type(title) == "WebElement"
-        #print type(title)
+if __name__ == '__main__':
+    # HengHeng's link
+    # url = 'http://www.jianshu.com/u/c0238b72b6f9'
+    # UncleFan's link
+    url = 'http://www.jianshu.com/u/73632348f37a'
+    filename = r'info.txt'
+    main(url)
