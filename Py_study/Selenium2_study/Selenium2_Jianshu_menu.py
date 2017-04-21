@@ -58,7 +58,7 @@ def write_menu(filename,titles):
             #print type(title)
 
 def main(url):
-    # <a class="title" href="/p/6f543f43aaec" target="_blank">《往事难如烟8》曾经的俱乐部（三）开大会</a>
+    # eg. <a class="title" href="/p/6f543f43aaec" target="_blank">《往事难如烟8》曾经的俱乐部（三）开大会</a>
     driver = webdriver.Firefox()
     driver.implicitly_wait(10)
     # driver.maximize_window()
