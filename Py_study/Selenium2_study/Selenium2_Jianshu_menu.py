@@ -34,7 +34,7 @@ def write_text(filename, info):
         fp.write('\n'.encode('utf-8'))
         fp.write('\n'.encode('utf-8'))
 
-def sroll_multi(driver,times=5,loopsleep=2):
+def sroll_multi(driver,times=5,loopsleep=2): 
     #40 titles about 3 times
     for i in range(times):
         time.sleep(loopsleep)
