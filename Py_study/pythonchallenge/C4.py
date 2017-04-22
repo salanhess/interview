@@ -3,10 +3,58 @@
 # page = http://www.pythonchallenge.com/pc/def/linkedlist.php
 
 page = 'http://www.pythonchallenge.com/pc/def/linkedlist.php'
+loopMainpage = 'http://www.pythonchallenge.com/pc/def/'
+firstpage = 'http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing='
 
-import urllib2
-import bs4 as BeautifulSoup
+from urllib import request
+import time
+import re
 
-response = urllib2.urlopen(page)
-html = response.read()
-print html
+# response = request.urlopen(page)
+# html = response.read()
+# soup = BeautifulSoup(html,'html.parser')
+#
+# # print(soup.prettify())
+# link1 = loopMainpage+ soup.find('a').get('href')
+# print(link1)
+#
+#
+# response = request.urlopen(link1)
+# html = response.read()
+# print(firstpage + html[-5:].decode("utf-8"))
+
+def looppage(page,num):
+    response = request.urlopen(page+str(num))
+    html = response.read()
+    print(html.decode("utf-8"))
+    pattern = re.compile('.*?(\d{1,10}).*?')
+    target = re.findall(pattern,html.decode("utf-8"))
+    print(page + target[0])
+    return target[0]
+
+
+# soup = BeautifulSoup(html,'html.parser')
+#
+# link2 = loopMainpage+ soup.text[-5:]
+# print(link2)
+
+# return_num = looppage(firstpage,'12345')
+# i = 0
+# while i < 401:
+#     print('Index %s:' % i)
+#     return_num = looppage(firstpage,return_num)
+#     time.sleep(11)
+#     i +=1
+#
+#
+# #Index84: 8022
+import random
+return_num = looppage(firstpage,'8022')
+i = 0
+while i < 300:
+    print('Index %s:' % i)
+    return_num = looppage(firstpage,return_num)
+    time.sleep(random.randint(5,10))
+    i +=1
+
+
