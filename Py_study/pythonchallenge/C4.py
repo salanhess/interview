@@ -27,7 +27,7 @@ def looppage(page,num):
     response = request.urlopen(page+str(num))
     html = response.read()
     print(html.decode("utf-8"))
-    pattern = re.compile('.*?(\d{1,10}).*?')
+    pattern = re.compile('and the next nothing is (\d{1,10}).*?')
     target = re.findall(pattern,html.decode("utf-8"))
     print(page + target[0])
     return target[0]
@@ -48,8 +48,9 @@ def looppage(page,num):
 #
 #
 # #Index84: 8022
+# Index 84+53=137 :82682
 import random
-return_num = looppage(firstpage,'8022')
+return_num = looppage(firstpage,'82682')
 i = 0
 while i < 300:
     print('Index %s:' % i)
@@ -58,3 +59,8 @@ while i < 300:
     i +=1
 
 
+# Index 108:
+# and the next nothing is 66831
+# http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=66831
+# Index 109:
+# peak.html
