@@ -20,5 +20,5 @@ pattern = re.compile('[a-z][A-Z]{3}([a-z])[A-Z]{3}[a-z]')
 
 with open('C3_info.txt') as f:
     codeList = pattern.findall(f.read())
-    print ''.join(codeList)
+    print(''.join(codeList))
 
