@@ -69,7 +69,7 @@ def main(url):
 
 if __name__ == '__main__':
     # HengHeng's link
-    # url = 'http://www.jianshu.com/u/c0238b72b6f9'
+    #url = 'http://www.jianshu.com/u/c0238b72b6f9'
     # UncleFan's link
     url = 'http://www.jianshu.com/u/73632348f37a'
     filename = r'info.txt'
