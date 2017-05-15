@@ -6,7 +6,10 @@
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-import urllib2,os,time
+import urllib2,os,time,sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def scroll_top(driver):
     if driver.name == "chrome":
@@ -34,7 +37,7 @@ def write_text(filename, info):
         fp.write('\n'.encode('utf-8'))
         fp.write('\n'.encode('utf-8'))
 
-def sroll_multi(driver,times=5,loopsleep=2): 
+def sroll_multi(driver,times=8,loopsleep=2):
     #40 titles about 3 times
     for i in range(times):
         time.sleep(loopsleep)
