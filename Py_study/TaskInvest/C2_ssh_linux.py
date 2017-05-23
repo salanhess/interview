@@ -1,3 +1,5 @@
+#coding=utf-8
+
 import paramiko
 from time import sleep
 import sys
