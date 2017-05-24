@@ -14,6 +14,7 @@ def save_img(img_url):
 #Use multi-thread to download
 def start_save_img(imgurl_list):
     for i in imgurl_list:
+        print threading.currentThread()
         th = threading.Thread(target=save_img,args=(i,))  # Don't forget , in i !!
         th.start()
 
