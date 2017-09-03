@@ -1,0 +1,25 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# refer to http://blog.csdn.net/xusiwei1236/article/details/25657611
+import sys
+DBL_EPSILON  = 0.001
+
+def Sqrt(A):  
+    a = 0.0
+    b = A + 0.25
+    # b = A 是错误的上界  
+    flag = 0
+    #while(b - a > 2*DBL_EPSILON) { // sometimes dead cycle when m==a or m==b.  
+    while flag < 100:
+        m = (b + a)/2
+        if( m-a < DBL_EPSILON or b-m < DBL_EPSILON ):
+            break
+        if( (m*m - A) * (a*a - A) < 0 ):
+            b = m
+        else:
+            a = m
+        flag += 1
+    return m,flag
+
+
+print Sqrt(3)
