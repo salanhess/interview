@@ -1,5 +1,6 @@
 import urllib
 import httplib
+from BeautifulSoup import BeautifulSoup, SoupStrainer
 
 
 
@@ -25,7 +26,9 @@ def getHtml(url, fpath):
 #     urls = ["http://daily.zhihu.com/story/"+str(item) for item in items]
 #     return urls
 
-#url = 'http://python.org'
-url = 'ftp://ftp.python.org/pub/python/README'
+url = 'http://python.org'
+#url = 'ftp://ftp.python.org/pub/python/README'
 fpath = 'my.txt'
 print getHtml(url, fpath)
+print url
+
