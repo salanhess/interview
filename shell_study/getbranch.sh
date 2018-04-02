@@ -8,11 +8,15 @@ zbs_storagecommit=29c220d
 zbs_workercommit=84e55a9
 
 check(){
-    if [ ! -d "$1"  ]; then
-          # Control will enter here if $DIRECTORY doesn't exist.
-          git clone git@git.xx.com:xxx/${1}.git
+    if [[ -z $2 ]]; then
+        #echo [Info]$1 commit_id not given
+        return
     fi
-    echo =======check $1 version=======
+    if [[ ! -d $1 ]]; then
+        #echo $1 DIRECTORY not exist
+        git clone git@git.jd.com:iaas-sdn/${1}.git
+    fi
+    echo [Info]=======check $1 version=======
     cd $1
     git reset --hard
     git fetch
