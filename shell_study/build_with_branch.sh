@@ -21,6 +21,11 @@ echo start to update
 current_zbs_path=`pwd`
 echo "[INFO] Current path is ${current_zbs_path}"
 
+if [ `cat /etc/hosts.allow |grep SSHD |wc -l` -eq 0 ] ; then
+    echo "[Info]Modify /etc/hosts.allow ing...."
+    echo 'SSHD: ALL' >> /etc/hosts.allow
+fi
+
 gitmodule() {
     modulename=$1
     branchname=$2
@@ -53,9 +58,9 @@ gitmodule zbs-client $BRANCH_client
 gitmodule zbs-worker $BRANCH_worker
 gitmodule zbs-openapi $BRANCH_openapi
 
+echo [Info]service is $1
 case $1 in
     zbs-client)
-    echo [Info]service is zbs-client
     cleanmodule zbs-scheduler
     cleanmodule zbs-storage
     cleanmodule zbs-worker
@@ -63,7 +68,6 @@ case $1 in
     sleep 3s && cd zbs-client && make clean && make && sleep 3s && ./zbs-client -v
     ;;
     zbs-openapi)
-    echo [Info]service is zbs-openapi
     cleanmodule zbs-scheduler
     cleanmodule zbs-gateway
     cleanmodule zbs-client
@@ -72,20 +76,17 @@ case $1 in
     sleep 3s && cd zbs-openapi && make clean && make && sleep 3s && ./zbs-openapi -v
     ;;
     zbs-gateway)
-    echo [Info]service is zbs-gateway
     cleanmodule zbs-client
     cleanmodule zbs-storage
     cleanmodule zbs-openapi
     sleep 3s && cd zbs-gateway && make clean && make && sleep 3s && ./zbs-gateway -v
     ;;
     zbs-scheduler)
-    echo [Info]service is zbs-scheduler
     cleanmodule zbs-storage
     cleanmodule zbs-openapi
     sleep 3s && cd zbs-scheduler && make clean && make && sleep 3s && ./zbs-scheduler -v
     ;;
     zbs-server)
-    echo [Info]service is zbs-server
     cleanmodule zbs-storage
     cleanmodule zbs-client
     cleanmodule zbs-scheduler
@@ -93,7 +94,6 @@ case $1 in
     sleep 3s && cd zbs-server && make clean && make && sleep 3s && ./zbs-server -v
     ;;
     zbs-storage)
-    echo [Info]service is zbs-storage
     cleanmodule zbs-server
     cleanmodule zbs-client
     cleanmodule zbs-scheduler
@@ -102,12 +102,11 @@ case $1 in
     sleep 3s && cd zbs-storage && make clean && make && sleep 3s && ./zbs-storage -v
     ;;
     zbs-worker)
-    echo [Info]service is zbs-worker
     cleanmodule zbs-openapi
     cleanmodule zbs-storage
     sleep 3s && cd zbs-worker && make clean && make && sleep 3s && ./zbs-worker -v
     ;;
     *)
-    echo xxxxx
+    echo xxxxx module NOT support
     ;;
 esac
